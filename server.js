@@ -2,14 +2,6 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 app.use(express.json());
-app.get("/api/customers", (req, res) => {
-    const customers = [{id: 1, fname: "atharva", lname: "jadhav"},
-    {id: 2, fname: "rushikesh", lname: "bappur"},
-    {id: 3, fname: "lemon", lname: "lime"}]
-    res.json(customers);
-})
-
-
 
 const port = 5000;
 app.listen(port, ()=> console.log("Server started on port " + port));

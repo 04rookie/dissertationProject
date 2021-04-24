@@ -35,8 +35,6 @@ function App(){
                 }
             });
             console.log(response);
-            console.log("hola")
-            console.log(response.data);
         }
         catch(error){
             console.log(error);
