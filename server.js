@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 app.use(express.json());
 
 const port = 5000;
-app.listen(port || process.env.PORT, ()=> console.log("Server started on port " + port));
+app.listen(process.env.PORT || port, ()=> console.log("Server started on port " + port));
 
 
 mongoose.connect("mongodb://localhost:27017/userDB", {useNewUrlParser: true, useUnifiedTopology: true});
