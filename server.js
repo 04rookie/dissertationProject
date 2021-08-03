@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 app.use(express.json());
 
 const port = 5000;
-app.listen(port, ()=> console.log("Server started on port " + port));
+app.listen(port || process.env.PORT, ()=> console.log("Server started on port " + port));
 
 
 mongoose.connect("mongodb://localhost:27017/userDB", {useNewUrlParser: true, useUnifiedTopology: true});
@@ -26,6 +26,7 @@ app.post("/Login", (req, res) => {
         }
         else if(foundUser){
             res.send({loginStatus: true});
+            console.log("Login Successful")
         }
         else {
             res.send({loginStatus: false});
