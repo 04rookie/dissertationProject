@@ -20,7 +20,7 @@ const User = mongoose.model("User", userSchema);
 
 app.get("/", function(req, res){
     console.log("inside /");
-    res.render("/client/src/index.js");
+    res.render("client/src/index.js");
 })
 
 app.post("/Login", (req, res) => {
