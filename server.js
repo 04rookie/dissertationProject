@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 app.use(express.json());
+import "./client/src/index.js";
 
 const port = 5000;
 app.listen(process.env.PORT || port, ()=> console.log("Server started on port " + port));
