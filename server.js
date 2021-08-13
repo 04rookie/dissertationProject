@@ -8,7 +8,7 @@ const port = 5000;
 app.listen(process.env.PORT || port, ()=> console.log("Server started on port " + port));
 
 
-mongoose.connect("mongodb://localhost:27017/userDB", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("***REMOVED***", {useNewUrlParser: true, useUnifiedTopology: true});
 
 const userSchema = new mongoose.Schema({
     userFirstName: String,
