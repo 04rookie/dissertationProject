@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
+import IntroContainer from "./Login/IntroContainer";
 import LoginApp from "./Login/LoginApp"
+import UserPageContainer from "./UserPage/UserPageContainer";
 const axios = require("axios");
 
 function App(){
+
+    const [appState, setAppState] = useState(<LoginApp callHandleLoginFromApp={callHandleLoginFromApp}
+        callHandleRegisterFromApp={callHandleRegisterFromApp}
+    />);
+
     function callHandleLoginFromApp(credentials){
         postServerLogin(credentials);
     }
@@ -20,6 +27,10 @@ function App(){
                 }
               });
             console.log(response);
+            if(response.data.loginStatus===true){
+                setAppState(<UserPageContainer userData = {response.data}/>);
+            }
+            
         }
         catch(error){
             console.log(error);
@@ -40,9 +51,8 @@ function App(){
             console.log(error);
         }
     }
-    return <LoginApp callHandleLoginFromApp={callHandleLoginFromApp}
-        callHandleRegisterFromApp={callHandleRegisterFromApp}
-    />;
+
+    return <div>{appState}</div>
 }
 
 

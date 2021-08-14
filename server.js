@@ -25,16 +25,18 @@ app.get('*', (req, res) => {
 
 app.post("/Login", (req, res) => {
     User.findOne({userEmail: req.body.email, userPassword: req.body.loginPassword}, (err, foundUser)=> {
+        let resObject = {userFirstName: foundUser.userFirstName, userLastName: foundUser.userLastName, userEmail: foundUser.userEmail, loginStatus: true};
         if(err){
             console.log("Error inside findOne Query in server inside /Login");
             console.log(err);
         }
         else if(foundUser){
-            res.send({loginStatus: true});
+            res.send(resObject);
             console.log("Login Successful")
         }
         else {
-            res.send({loginStatus: false});
+            res.send(resObject);
+            console.log("Login Failed");
         }
     });
 });
