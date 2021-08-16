@@ -55,8 +55,6 @@ function VideoChatRoom(props){
         else if(type==="showVideoButton"){
             try{
                 meeting.startVideo();
-                showMe();
-                showThem();
             } 
             catch(ex){
                 console.log("Error occurred whern sharing camera", ex);
@@ -126,6 +124,8 @@ function VideoChatRoom(props){
     async function joinMeeting(){
         console.log(dynamicRoomName + "inside join meeting");
         meeting = new window.Metered.Meeting();
+        showMe();
+        showThem();
         meetingInfo = await meeting.join({
             roomURL: "instahelp.metered.live/" + dynamicRoomName,
             name: "John Doe"
@@ -143,7 +143,7 @@ function VideoChatRoom(props){
         <button type="submit" name="joinRoomTwo" onClick={handleClick}> Join Room 2</button>
         <input type="text" name="roomid" value={textBoxObjectDOM.roomid} onChange={handleChange}/>
         <video width="320" height="240" id="userVideo" autoPlay muted></video>
-        <video width="320" height="240" id="userTwoVideo" autoPlay muted></video>
+        <div id="userTwoVideo"></div>
     </form>
     </div>;
 }
