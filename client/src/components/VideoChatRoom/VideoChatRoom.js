@@ -59,7 +59,7 @@ function VideoChatRoom(props){
     async function joinMeeting(){
         meeting = new window.Metered.Meeting();
         meetingInfo = await meeting.join({
-            roomURL: "instahelp.metered.live/meetupfour",
+            roomURL: "instahelp.metered.live/meetupfive",
             name: "John Doe"
         });
     }
