@@ -100,3 +100,34 @@ app.post("/CreateRoom", (req, res)=>{
         res.send(dynamicRoomName);
     });
 });
+
+const roomNameSchema = new mongoose.Schema({
+    roomName: String
+})
+
+const RoomName = mongoose.model("RoomName", roomNameSchema);
+
+app.post("/PushRoomName", (req, res)=>{
+    const roomName = new RoomName({roomName: req.body.roomName});
+    roomName.save((err)=>{
+        if(err){
+            console.log(err);
+            res.send({pushStatus: true});
+        }
+        else{
+            res.send({pushStatus: false});
+        }
+    });
+})
+
+app.get("/RoomName", (req, res)=>{
+    roomName.findOne({}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
+        console.log( post );
+      });
+    if(err){
+        console.log(err);
+    }
+    else {
+        res.send(post)
+    }
+});

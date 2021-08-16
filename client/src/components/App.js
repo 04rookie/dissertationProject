@@ -54,7 +54,7 @@ function App(){
     }
 
     function callVideoChatRoom(){
-        setAppState(<VideoChatRoom callCreateRoomFromApp={callCreateRoomFromApp}/>);
+        setAppState(<VideoChatRoom callCreateRoomFromApp={callCreateRoomFromApp} callPushRoomNameFromApp={callPushRoomNameFromApp} getRoomNameFromApp={getRoomNameFromApp}/>);
     }
 
     async function callCreateRoomFromApp(){
@@ -78,9 +78,43 @@ function App(){
         catch(error){
             console.log(error);
         }
-
     }
 
+    function callPushRoomNameFromApp(roomName){
+        postRoomName(roomName);
+    }
+
+    async function postRoomName(roomName){
+        try{
+            //console.log("Inside postCreateRoom APP.js");
+            const response = await axios.post("/PushRoomName", roomName,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response);
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    async function getRoomNameFromApp(){
+        return await getRoomName();
+    }
+
+    async function getRoomName(){
+        try{
+            //console.log("Inside postCreateRoom APP.js");
+            const response = await axios.post("/RoomName");
+            console.log(response);
+            return response.data;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
     return <div>{appState}</div>
 }
 

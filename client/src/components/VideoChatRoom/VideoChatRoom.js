@@ -1,21 +1,48 @@
 import React, {useEffect, useRef, useState} from "react";
-
+import $ from "jquery";
 function VideoChatRoom(props){
     let meeting;
     let meetingInfo;
     let [dynamicRoomName, setDynamicRoomName] = useState();
+    const [textBoxObjectDOM, settextBoxObjectDOM] = useState({
+        roomid: "",
+        temp: ""
+    });
+
+    function handleChange(event){
+        const { name, value } = event.target;
+
+        settextBoxObjectDOM(prevValue => {
+            return {
+                ...prevValue,
+                [name]: value
+            };
+        });
+    }
     function handleClick(event){
         event.preventDefault();
         const type = event.target.name;
         if(type==="createRoom"){
             props.callCreateRoomFromApp().then((value)=>{
                 setDynamicRoomName(value)
+                let roomName = value;
+                props.callPushRoomNameFromApp({roomNameKey: roomName});
                 console.log(value);
             });
         }
         else if(type==="joinRoom"){
             joinMeeting();
             console.log("inside join room" + dynamicRoomName);
+        }
+        else if(type==="joinRoomTwo"){
+            // props.getRoomNameFromApp().then((value)=>{
+            //     setDynamicRoomName(value);
+            //     console.log("User 2 joined at room " + dynamicRoomName);
+            // });
+            setDynamicRoomName(textBoxObjectDOM.roomid);
+            console.log(textBoxObjectDOM.roomid);
+            console.log(dynamicRoomName);
+            joinMeeting();
         }
         else if(type==="unMuteButton"){
             try{
@@ -58,6 +85,42 @@ function VideoChatRoom(props){
             }
         });
     }
+    
+    function showThem(){
+    /**
+    * remoteTrackItem = { 
+    *   streamId: "eaa6104b-390a-4b0a-b8d1-66f7d19f8c1a", 
+    *   type: "video"
+    *   participantSessionId: "60fef02300f4a23904ab4862"
+    *   track: MediaStreamTrack,
+    *   name: "Jane Smith"
+    * }
+    */
+    meeting.on("remoteTrackStarted", function(remoteTrackItem) {
+        console.log("remoteTrackStarted", remoteTrackItem);
+        // Converting MediaStreamTrack to MediaStream
+        var track = remoteTrackItem.track;
+        var stream = new MediaStream([track]);
+
+        // Creating a videoTag to show the remote stream
+        const videoTag = document.createElement("video");
+        videoTag.autoplay = true;
+        videoTag.srcObject = stream;
+        videoTag.playsinline = true;
+        // We are setting the id of the videoTag to the streamId
+        // So that when this track is stopped we can remove the 
+        // videoTag from the page.
+        videoTag.id = remoteTrackItem.streamId;
+            // Setting the class name to participantSessionId so that when this participant
+        // leaves we can easily remove all the video tags associated with this
+        // participant.
+        videoTag.class = remoteTrackItem.participantSessionId;
+    
+        // Adding the video tag to container where we will display
+        // All the remote streams
+        $("#userTwoVideo").append(videoTag);
+    });
+}
 
     async function joinMeeting(){
         console.log(dynamicRoomName + "inside join meeting");
@@ -75,7 +138,10 @@ function VideoChatRoom(props){
         <button type="submit" name="joinRoom" onClick={handleClick}> Join Room</button>
         <button type="submit" name="unMuteButton" onClick={handleClick}>Unmute</button>
         <button type="submit" name="showVideoButton" onClick={handleClick}>Show Video</button>
+        <button type="submit" name="joinRoomTwo" onClick={handleClick}> Join Room 2</button>
+        <input type="text" name="roomid" value={textBoxObjectDOM.roomid} onChange={handleChange}/>
         <video width="320" height="240" id="userVideo" autoPlay muted></video>
+        <video width="320" height="240" id="userTwoVideo" autoPlay muted></video>
     </form>
     </div>;
 }
