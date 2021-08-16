@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
+const axios = require("axios");
+const { Server } = require("http");
+require('dotenv').config()
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/app")));
 const port = 5000;
@@ -56,4 +59,27 @@ app.post("/Register", (req, res) => {
             res.send({registerStatus: true});
         }
     });
+});
+
+async function postCreateRoom()
+{
+    try{
+        const data = {roomName: "meetupfour"};
+        console.log("inside postCreateRoom Server.js beforePOST");
+        const response = await axios.post("https://instahelp.metered.live/api/v1/room?secretKey=" + process.env.METERED_SECRET_KEY, data,
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response);
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+app.post("/CreateRoom", (req, res)=>{
+    console.log("inside server.js /CreateRoom");
+    postCreateRoom();
 });

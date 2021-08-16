@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import IntroContainer from "./Login/IntroContainer";
 import LoginApp from "./Login/LoginApp"
 import UserPageContainer from "./UserPage/UserPageContainer";
+import VideoChatRoom from "./VideoChatRoom/VideoChatRoom";
 const axios = require("axios");
 
 function App(){
@@ -28,7 +29,7 @@ function App(){
               });
             console.log(response);
             if(response.data.loginStatus===true){
-                setAppState(<UserPageContainer userData = {response.data}/>);
+                setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
             }
             
         }
@@ -46,6 +47,32 @@ function App(){
                 }
             });
             console.log(response);
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    function callVideoChatRoom(){
+        setAppState(<VideoChatRoom callCreateRoomFromApp={callCreateRoomFromApp}/>);
+    }
+
+    function callCreateRoomFromApp(){
+        console.log("Inside callCreateRoomFromApp in APP.js");
+        postCreateRoom();
+    }
+
+    async function postCreateRoom(){
+        try{
+            console.log("Inside postCreateRoom APP.js");
+            const credentials = {data:"decoywhosendsthistoserver"}
+            const response = await axios.post("/CreateRoom", credentials,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log("Room Created Succefully" + response);
         }
         catch(error){
             console.log(error);
