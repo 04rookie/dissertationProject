@@ -1,18 +1,21 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 function VideoChatRoom(props){
     let meeting;
     let meetingInfo;
+    let [dynamicRoomName, setDynamicRoomName] = useState();
     function handleClick(event){
         event.preventDefault();
         const type = event.target.name;
         if(type==="createRoom"){
-            props.callCreateRoomFromApp();
-            console.log("inside create room");
+            props.callCreateRoomFromApp().then((value)=>{
+                setDynamicRoomName(value)
+                console.log(value);
+            });
         }
         else if(type==="joinRoom"){
             joinMeeting();
-            console.log("inside join room");
+            console.log("inside join room" + dynamicRoomName);
         }
         else if(type==="unMuteButton"){
             try{
@@ -50,16 +53,17 @@ function VideoChatRoom(props){
                  * e.g: <video id="localvideo" autoplay muted></video>
                  * This video tag will show the user their own video
                  */
-                document.getElementById("localvideo").srcObject = mediaStream;
-                document.getElementById("localvideo").play();
+                document.getElementById("userVideo").srcObject = mediaStream;
+                document.getElementById("userVideo").play();
             }
         });
     }
 
     async function joinMeeting(){
+        console.log(dynamicRoomName + "inside join meeting");
         meeting = new window.Metered.Meeting();
         meetingInfo = await meeting.join({
-            roomURL: "instahelp.metered.live/meetupfive",
+            roomURL: "instahelp.metered.live/" + dynamicRoomName,
             name: "John Doe"
         });
     }

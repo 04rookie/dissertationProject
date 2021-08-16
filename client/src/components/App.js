@@ -57,9 +57,9 @@ function App(){
         setAppState(<VideoChatRoom callCreateRoomFromApp={callCreateRoomFromApp}/>);
     }
 
-    function callCreateRoomFromApp(){
+    async function callCreateRoomFromApp(){
         console.log("Inside callCreateRoomFromApp in APP.js");
-        postCreateRoom();
+        return await postCreateRoom();
     }
 
     async function postCreateRoom(){
@@ -72,11 +72,13 @@ function App(){
                     'Content-Type': 'application/json'
                 }
             });
-            console.log("Room Created Succefully" + response);
+            //console.log(response.data);
+            return response.data;
         }
         catch(error){
             console.log(error);
         }
+
     }
 
     return <div>{appState}</div>

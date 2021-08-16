@@ -61,10 +61,22 @@ app.post("/Register", (req, res) => {
     });
 });
 
+function makeid(length) {
+    var result           = '';
+    var characters       = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
 async function postCreateRoom()
 {
     try{
-        const data = {roomName: "meetupfive"};
+        let dynamicRoomName = makeid(10);
+        const data = {roomName: dynamicRoomName};
         console.log("inside postCreateRoom Server.js beforePOST");
         const response = await axios.post("https://instahelp.metered.live/api/v1/room?secretKey=" + process.env.METERED_SECRET_KEY, data,
         {
@@ -73,6 +85,8 @@ async function postCreateRoom()
             }
         });
         console.log(response);
+        console.log(dynamicRoomName + "sv 88");
+        return dynamicRoomName;
     }
     catch(error){
         console.log(error);
@@ -81,5 +95,8 @@ async function postCreateRoom()
 
 app.post("/CreateRoom", (req, res)=>{
     console.log("inside server.js /CreateRoom");
-    postCreateRoom();
+    let dynamicRoomName = postCreateRoom().then((dynamicRoomName)=>{
+        console.log(dynamicRoomName + "sv 99");
+        res.send(dynamicRoomName);
+    });
 });
