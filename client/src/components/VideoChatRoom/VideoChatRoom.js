@@ -63,7 +63,7 @@ function VideoChatRoom(props){
         }
         else if(type==="showThemVideoButton"){
             try{
-                meeting.startVideo();
+                //meeting.startVideo();
                 showThem();
             }
             catch(err){
