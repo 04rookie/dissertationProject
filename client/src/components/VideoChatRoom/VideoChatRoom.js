@@ -56,18 +56,10 @@ function VideoChatRoom(props){
             try{
                 meeting.startVideo();
                 showMe();
+                showThem();
             } 
             catch(ex){
                 console.log("Error occurred whern sharing camera", ex);
-            }
-        }
-        else if(type==="showThemVideoButton"){
-            try{
-                //meeting.startVideo();
-                showThem();
-            }
-            catch(err){
-                console.log("Error" + err);
             }
         }
     }
