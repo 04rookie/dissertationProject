@@ -61,6 +61,15 @@ function VideoChatRoom(props){
                 console.log("Error occurred whern sharing camera", ex);
             }
         }
+        else if(type==="showThemVideoButton"){
+            try{
+                meeting.startVideo();
+                showThem();
+            }
+            catch(err){
+                console.log("Error" + err);
+            }
+        }
     }
 
     function showMe(){
@@ -137,7 +146,8 @@ function VideoChatRoom(props){
         <button type="submit" name="deleteRoom" onClick={handleClick}>Delete Room</button>
         <button type="submit" name="joinRoom" onClick={handleClick}> Join Room</button>
         <button type="submit" name="unMuteButton" onClick={handleClick}>Unmute</button>
-        <button type="submit" name="showVideoButton" onClick={handleClick}>Show Video</button>
+        <button type="submit" name="showVideoButton" onClick={handleClick}>Show Me</button>
+        <button type="submit" name="showThemVideoButton" onClick={handleClick}>Show Them</button>
         <button type="submit" name="joinRoomTwo" onClick={handleClick}> Join Room 2</button>
         <input type="text" name="roomid" value={textBoxObjectDOM.roomid} onChange={handleChange}/>
         <video width="320" height="240" id="userVideo" autoPlay muted></video>
