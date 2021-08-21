@@ -124,6 +124,7 @@ function App(){
             <Route exact path="/" render={(props=>(<LoginApp {...props} />))}></Route>
             <Route exact path="/user-page" render={(props)=>(<UserPageContainer {...props} userData={{UserFirstName: "LOL"}}/>)}></Route>
             <Route exact path="/register" render={(props)=>(<RegisterApp {...props} />)}/>
+            <Route exact path="/video-chat-room" render={(props)=>(<VideoChatRoom {...props} callCreateRoomFromApp={callCreateRoomFromApp} callPushRoomNameFromApp={callPushRoomNameFromApp} getRoomNameFromApp={getRoomNameFromApp}/>)}></Route>
         </Switch>
     </>)
 }

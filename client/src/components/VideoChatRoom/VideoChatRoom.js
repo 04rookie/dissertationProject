@@ -19,6 +19,7 @@ function VideoChatRoom(props){
             };
         });
     }
+    
     function handleClick(event){
         event.preventDefault();
         const type = event.target.name;

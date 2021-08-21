@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import "./LoginStyles.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 function RegisterContainer(props){
   const [contact, setContact] = useState({
     fName: "",
@@ -24,9 +25,25 @@ function RegisterContainer(props){
     const type = event.target.name;
     if(type==="signupButton"){
       console.log("calling from reg cont callHandleRegisterFromApp")
-      props.callHandleRegisterFromApp(contact);
+      //props.callHandleRegisterFromApp(contact);
+      postServerRegister(contact);
     }
     event.preventDefault();
+  }
+
+  async function postServerRegister(credentials){
+    try{
+        const response = await axios.post("/Register", credentials, 
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response);
+    }
+    catch(error){
+        console.log(error);
+    }
   }
 
   return (
