@@ -3,7 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import IntroContainer from "./IntroContainer";
 import LoginContainer from "./LoginContainer";
 import RegisterContainer from "./RegisterContainer";
-function LoginApp(props){
+function RegisterApp(props){
     const [loginAppState, setLoginAppState] = useState(<LoginContainer handleSignUp={handleSignUp} 
         callHandleLoginFromApp={props.callHandleLoginFromApp}
     />);
@@ -20,9 +20,9 @@ function LoginApp(props){
     }
 
     return <div className="row">
-        <LoginContainer />
+        <RegisterContainer />
         <IntroContainer />
     </div>
 }
 
-export default LoginApp;
+export default RegisterApp;

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Route, Switch } from "react-router-dom";
 import IntroContainer from "./Login/IntroContainer";
 import LoginApp from "./Login/LoginApp"
 import UserPageContainer from "./UserPage/UserPageContainer";
 import VideoChatRoom from "./VideoChatRoom/VideoChatRoom";
+import RegisterContainer from "./Login/RegisterContainer";
+import LoginContainer from "./Login/LoginContainer";
+import RegisterApp from "./Login/RegisterApp";
 const axios = require("axios");
 
 function App(){
@@ -115,7 +119,13 @@ function App(){
             console.log(error);
         }
     }
-    return <div>{appState}</div>
+    return (<>
+        <Switch>
+            <Route exact path="/" render={(props=>(<LoginApp {...props} />))}></Route>
+            <Route exact path="/user-page" render={(props)=>(<UserPageContainer {...props} userData={{UserFirstName: "LOL"}}/>)}></Route>
+            <Route exact path="/register" render={(props)=>(<RegisterApp {...props} />)}/>
+        </Switch>
+    </>)
 }
 
 

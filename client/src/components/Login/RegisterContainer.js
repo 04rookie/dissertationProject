@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "./LoginStyles.css";
-
+import { Link } from "react-router-dom";
 function RegisterContainer(props){
   const [contact, setContact] = useState({
     fName: "",
@@ -25,9 +25,6 @@ function RegisterContainer(props){
     if(type==="signupButton"){
       console.log("calling from reg cont callHandleRegisterFromApp")
       props.callHandleRegisterFromApp(contact);
-    }
-    else if(type==="goToLoginButton"){
-      props.handleLogin();
     }
     event.preventDefault();
   }
@@ -62,7 +59,7 @@ function RegisterContainer(props){
         />
         <input onChange={handleChange} name="registrationPassword" placeholder="Password" autoComplete="off"  />
         <button type="submit" onClick={handleSubmit} name="signupButton">Submit</button>
-        <button type="submit" onClick={handleSubmit} name="goToLoginButton"> Go to login page</button>
+        <Link to="/" style={{ textDecoration: 'none' }}><button type="submit" name="goToLoginButton">Go to login page</button></Link>
       </form>
     </div>
   );
