@@ -3,7 +3,6 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const axios = require("axios");
-const { Server } = require("http");
 require('dotenv').config()
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/app")));
