@@ -119,15 +119,3 @@ app.post("/PushRoomName", (req, res)=>{
         }
     });
 })
-
-app.get("/RoomName", (req, res)=>{
-    roomName.findOne({}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
-        console.log( post );
-      });
-    if(err){
-        console.log(err);
-    }
-    else {
-        res.send(post)
-    }
-});

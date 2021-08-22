@@ -1,5 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import $ from "jquery";
+import axios from "axios";
 function VideoChatRoom(props){
     let meeting;
     let meetingInfo;
@@ -24,10 +25,10 @@ function VideoChatRoom(props){
         event.preventDefault();
         const type = event.target.name;
         if(type==="createRoom"){
-            props.callCreateRoomFromApp().then((value)=>{
+            postCreateRoom().then((value)=>{
                 setDynamicRoomName(value)
                 let roomName = value;
-                props.callPushRoomNameFromApp({roomNameKey: roomName});
+                //postRoomName({roomNameKey: roomName});
                 console.log(value);
             });
         }
@@ -131,6 +132,40 @@ function VideoChatRoom(props){
             roomURL: "instahelp.metered.live/" + dynamicRoomName,
             name: "John Doe"
         });
+    }
+
+    async function postCreateRoom(){
+        try{
+            console.log("Inside postCreateRoom APP.js");
+            const credentials = {data:"decoywhosendsthistoserver"}
+            const response = await axios.post("/CreateRoom", credentials,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            //console.log(response.data);
+            return response.data;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    async function postRoomName(roomName){
+        try{
+            //console.log("Inside postCreateRoom APP.js");
+            const response = await axios.post("/PushRoomName", roomName,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response);
+        }
+        catch(error){
+            console.log(error);
+        }
     }
 
     return <div>Hello

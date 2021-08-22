@@ -9,7 +9,7 @@ function LoginContainer(props){
     email: "",
     loginPassword: ""
   });
-  const history = useHistory();
+  let history = useHistory();
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -42,7 +42,7 @@ function LoginContainer(props){
         console.log(response);
         if(response.data.loginStatus===true){
             //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
-            const loadUserPage = ()=> history.push("/user-page");
+            const loadUserPage = ()=> history.push({pathname:"/user-page", state: {data:response.data} });
             loadUserPage();
         }
         
