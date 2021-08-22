@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import { Link, useHistory } from "react-router-dom";
 import "./LoginStyles.css";
-import RegisterContainer from "./RegisterContainer";
 const axios = require("axios");
 
 function LoginContainer(props){
   const [contact, setContact] = useState({
     email: "",
-    loginPassword: ""
+    loginPassword: "",
+    status:""
   });
   let history = useHistory();
 
@@ -22,14 +22,38 @@ function LoginContainer(props){
     });
   }
 
+  function setStatus(){
+    setContact(prevValue=>{
+      return {
+        ...prevValue,
+        status: "Login failed."
+      }
+    })
+  }
+
   function handleClick(event)
   {
     const type = event.target.name;
-    if(type === "submit")
-    {
+    const success = validation();
+    event.preventDefault();
+    if(success === false){
+      setStatus();
+      return
+    }
+    else if(success=== true && type==="submit"){
       postServerLogin({email: contact.email, loginPassword: contact.loginPassword});
     }
     event.preventDefault();
+  }
+  
+  function validation(){
+    if(contact.email===null || contact.email===""){
+      return false;
+    }
+    else if(contact.loginPassword===null || contact.email===""){
+      return false;
+    }
+    else return true;
   }
 
   async function postServerLogin(credentials){
@@ -44,6 +68,9 @@ function LoginContainer(props){
             //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
             const loadUserPage = ()=> history.push({pathname:"/user-page", state: {data:response.data} });
             loadUserPage();
+        }
+        else{
+          setStatus();
         }
         
     }
@@ -69,6 +96,7 @@ function LoginContainer(props){
         <input onChange={handleChange} type="password" name="loginPassword" placeholder="Password" autoComplete="off"/>
         <button type="submit" onClick={handleClick} name="submit">Submit</button>
         <Link to="/register" style={{ textDecoration: 'none' }}><button type="submit" name="signupButton">Sign Up</button></Link>
+        <h3>{contact.status}</h3>
       </form>
     </div>
   );
