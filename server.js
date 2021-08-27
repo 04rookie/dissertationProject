@@ -13,6 +13,7 @@ app.listen(process.env.PORT || port, ()=> console.log("Server started on port " 
 mongoose.connect("***REMOVED***", {useNewUrlParser: true, useUnifiedTopology: true});
 
 const userSchema = new mongoose.Schema({
+    userID: String,
     userFirstName: String,
     userLastName: String,
     userEmail: String,
@@ -32,7 +33,7 @@ app.post("/Login", (req, res) => {
             console.log(err);
         }
         else if(foundUser){
-            let resObject = {userFirstName: foundUser.userFirstName, userLastName: foundUser.userLastName, userEmail: foundUser.userEmail, loginStatus: true};
+            let resObject = {userID:foundUser.userID ,userFirstName: foundUser.userFirstName, userLastName: foundUser.userLastName, userEmail: foundUser.userEmail, loginStatus: true};
             res.send(resObject);
             console.log("Login Successful")
         }
@@ -46,7 +47,8 @@ app.post("/Login", (req, res) => {
 
 app.post("/Register", (req, res) => {
     console.log(req.body);
-    const newUser = new User({userFirstName: req.body.fName,
+    const id = makeid(20);
+    const newUser = new User({ userID: id, userFirstName: req.body.fName,
         userLastName: req.body.lName, userEmail: req.body.email,
         userPassword: req.body.registrationPassword});
     newUser.save((err) => {

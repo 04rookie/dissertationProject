@@ -1,8 +1,8 @@
 import React from "react";
-import "./LoginStyles.css"
-
+import styles from "./LoginStyles.module.css";
 function IntroContainer(){
-    return <div className="col-lg-6 introContainer">
+    console.log(styles);
+    return <div className={["col-lg-6", styles.introContainer].join(" ")}>
     <div id="carouselExampleSlidesOnly" className="carousel slide loginIntroCarousel" data-bs-ride="carousel" data-bs-interval="4560">
     <div className="carousel-inner">
       <div className="carousel-item active container-fluid">

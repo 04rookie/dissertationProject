@@ -104,7 +104,7 @@ function App(){
     return (<>
         <Switch>
             <Route exact path="/" render={(props=>(<LoginApp {...props} />))}></Route>
-            <Route exact path="/user-page" render={(props)=>(<UserPageContainer {...props}/>)}></Route>
+            <Route exact path="/user-page/:userID" render={(props)=>(<UserPageContainer {...props}/>)}></Route>
             <Route exact path="/register" render={(props)=>(<RegisterApp {...props} />)}/>
             <Route exact path="/video-chat-room" render={(props)=>(<VideoChatRoom {...props}/>)}></Route>
         </Switch>

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "./LoginStyles.css";
+import styles from "./LoginStyles.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 function RegisterContainer(props){
@@ -47,7 +47,7 @@ function RegisterContainer(props){
   }
 
   return (
-    <div className="col-lg-6 loginContainer container">
+    <div className={["col-lg-6", styles.loginContainer, styles.container].join(" ")}>
       <h1>
         Hello {contact.fName} {contact.lName}
       </h1>

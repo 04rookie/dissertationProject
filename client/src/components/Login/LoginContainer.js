@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { Link, useHistory } from "react-router-dom";
-import "./LoginStyles.css";
+import styles from "./LoginStyles.module.css";
 const axios = require("axios");
 
 function LoginContainer(props){
@@ -66,7 +66,7 @@ function LoginContainer(props){
         console.log(response);
         if(response.data.loginStatus===true){
             //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
-            const loadUserPage = ()=> history.push({pathname:"/user-page", state: {data:response.data} });
+            const loadUserPage = ()=> history.push({pathname:"/user-page/" + response.data.userID, state: {data:response.data} });
             loadUserPage();
         }
         else{
@@ -80,7 +80,7 @@ function LoginContainer(props){
   }
 
   return (
-    <div className="col-lg-6 loginContainer container">
+    <div className={["col-lg-6", styles.loginContainer, styles.container].join(" ")}>
       <h1>
         Login
       </h1>

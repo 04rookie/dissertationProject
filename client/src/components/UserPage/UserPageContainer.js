@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function UserPageContainer(){
     const location = useLocation();
     console.log(location);
-    return <div> Hello wait {location.state.data.userFirstName}
+    return <div> Hello wait {location.state.data.userFirstName} {location.state.data.userID}
     <form>
     <Link to="/video-chat-room" style={{ textDecoration: 'none' }}><button type="submit" name="Call">Call</button></Link>
     </form>
