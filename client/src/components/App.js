@@ -6,7 +6,8 @@ import VideoChatRoom from "./VideoChatRoom/VideoChatRoom";
 import RegisterApp from "./Login/RegisterApp";
 import Market from "./Market/Market";
 import Appointment from "./Appointment/Appointment";
-
+import DoctorRegistration from "./Doctor/DoctorRegistration";
+import DoctorPage from "./Doctor/DoctorPage";
 function App(){
 
     // const [appState, setAppState] = useState(<LoginApp callHandleLoginFromApp={callHandleLoginFromApp}
@@ -110,6 +111,9 @@ function App(){
             <Route exact path="/video-chat-room" render={(props)=>(<VideoChatRoom {...props}/>)}></Route>
             <Route exact path="/market" render={(props)=>(<Market/>)}/>
             <Route exact path="/appointment" render={(props)=>(<Appointment/>)}/>
+            <Route exact path="/doctor/registration" render={(props)=>(<DoctorRegistration/>)}/>
+            <Route exact path="/doctor/:doctorID" render={(props)=>(<DoctorPage {...props}/>)}/>
+            
         </Switch>
     </>)
 }

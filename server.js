@@ -146,3 +146,60 @@ app.post("/PushRoomName", (req, res)=>{
         }
     });
 })
+
+const doctorSchema = new mongoose.Schema({
+    doctorID: String,
+    doctorName: String,
+    monday: Array,
+    wednesday: Array,
+    tuesday: Array,
+    thursday: Array,
+    friday: Array,
+    saturday: Array,
+    sunday: Array
+})
+
+const Doctor = mongoose.model("Doctor", doctorSchema);
+
+app.post("/register-doctor", (req, res)=>{
+    const id = makeid(20);
+    const newDoctor = new Doctor({
+        doctorID: id,
+        doctorName: req.body.doctorName,
+        monday: req.body.monday,
+        wednesday: req.body.tuesday,
+        tuesday: req.body.wednesday,
+        thursday: req.body.thursday,
+        friday: req.body.friday,
+        saturday: req.body.saturday,
+        sunday:req.body.sunday});
+    newDoctor.save((err)=>{
+        if(err){
+            console.log(err);
+            res.send(false);
+        }
+        else{
+            console.log("success");
+            res.send(true);
+        }
+    })
+})
+
+app.get("/doctor/:doctorID",(req, res)=>{
+    const doctorID = req.params.doctorID;
+    Doctor.findOne({doctorID: doctorID}, (err, foundUser)=>{
+        if(err){
+            console.log("Error inside findOne Query in server inside /doctor");
+            console.log(err);
+        }
+        else if(foundUser){
+            res.send(foundUser);
+            console.log("user fetched");
+        }
+        else{
+            res.send(false);
+            console.log("No user found");
+        }
+    })
+
+})

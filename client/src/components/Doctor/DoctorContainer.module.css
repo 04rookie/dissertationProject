@@ -1,0 +1,19 @@
+.DoctorHeader {
+    height: auto;
+    background-color: #16C79A;
+    padding: 5rem;
+}
+
+.DoctorHeaderAvatar {
+    margin: 1rem auto 1rem auto;
+}
+
+.DoctorHeaderText {
+    text-align: center;
+}
+
+.DoctorHeaderFAB{
+    display: inline-block;
+    margin: 1rem auto 1rem auto;
+    left: 85vw;
+}
