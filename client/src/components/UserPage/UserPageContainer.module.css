@@ -1,0 +1,19 @@
+.userPageHeader {
+    height: auto;
+    background-color: #16C79A;
+    padding: 5rem;
+}
+
+.userPageHeaderAvatar {
+    margin: 1rem auto 1rem auto;
+}
+
+.userPageHeaderText {
+    text-align: center;
+}
+
+.userPageHeaderFAB{
+    display: inline-block;
+    margin: 1rem auto 1rem auto;
+    left: 85vw;
+}

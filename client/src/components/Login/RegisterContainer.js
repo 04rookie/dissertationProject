@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import styles from "./LoginStyles.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import BasicDatePicker from "../Date/BasicDatePicker";
+
 function RegisterContainer(props){
   const [contact, setContact] = useState({
     fName: "",
@@ -33,7 +35,7 @@ function RegisterContainer(props){
 
   async function postServerRegister(credentials){
     try{
-        const response = await axios.post("/Register", credentials, 
+        const response = await axios.post("/register", credentials, 
         {
             headers: {
                 'Content-Type': 'application/json'
@@ -78,7 +80,7 @@ function RegisterContainer(props){
         <button type="submit" onClick={handleSubmit} name="signupButton">Submit</button>
         <Link to="/" style={{ textDecoration: 'none' }}><button type="submit" name="goToLoginButton">Go to login page</button></Link>
       </form>
-    </div>
+      </div>
   );
 }
 

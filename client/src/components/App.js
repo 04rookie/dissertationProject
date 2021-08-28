@@ -4,7 +4,8 @@ import LoginApp from "./Login/LoginApp"
 import UserPageContainer from "./UserPage/UserPageContainer";
 import VideoChatRoom from "./VideoChatRoom/VideoChatRoom";
 import RegisterApp from "./Login/RegisterApp";
-
+import Market from "./Market/Market";
+import Appointment from "./Appointment/Appointment";
 
 function App(){
 
@@ -107,6 +108,8 @@ function App(){
             <Route exact path="/user-page/:userID" render={(props)=>(<UserPageContainer {...props}/>)}></Route>
             <Route exact path="/register" render={(props)=>(<RegisterApp {...props} />)}/>
             <Route exact path="/video-chat-room" render={(props)=>(<VideoChatRoom {...props}/>)}></Route>
+            <Route exact path="/market" render={(props)=>(<Market/>)}/>
+            <Route exact path="/appointment" render={(props)=>(<Appointment/>)}/>
         </Switch>
     </>)
 }

@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "/app")));
 const port = 5000;
 app.listen(process.env.PORT || port, ()=> console.log("Server started on port " + port));
-
+const date = require('date-and-time');
 
 mongoose.connect("***REMOVED***", {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
     userFirstName: String,
     userLastName: String,
     userEmail: String,
-    userPassword: String
+    userPassword: String,
+    userJoinDate: String
 });
 
 const User = mongoose.model("User", userSchema);
@@ -38,19 +39,22 @@ app.post("/Login", (req, res) => {
             console.log("Login Successful")
         }
         else {
-            let resObject = {userFirstName: null, userLastName: null, userEmail: null, loginStatus: false};
+            let resObject = {userID:foundUser.userID ,userFirstName: null, userLastName: null, userEmail: null, loginStatus: false};
             res.send(resObject);
             console.log("Login Failed");
         }
     });
 });
 
-app.post("/Register", (req, res) => {
+app.post("/register", (req, res) => {
     console.log(req.body);
     const id = makeid(20);
+    const now = new Date();
+    const userJoinDate = date.format(now, 'YYYY/MM/DD HH:mm:ss');
     const newUser = new User({ userID: id, userFirstName: req.body.fName,
         userLastName: req.body.lName, userEmail: req.body.email,
-        userPassword: req.body.registrationPassword});
+        userPassword: req.body.registrationPassword,
+        userJoinDate: userJoinDate});
     newUser.save((err) => {
         if(err){
             console.log(err);
@@ -62,6 +66,27 @@ app.post("/Register", (req, res) => {
         }
     });
 });
+
+app.get("/user/:userID",(req, res)=>{
+    const userID = req.params.userID;
+    User.findOne({userID: userID}, (err, foundUser)=>{
+        if(err){
+            console.log("Error inside findOne Query in server inside /user");
+            console.log(err);
+        }
+        else if(foundUser){
+            let resObject = {userID:foundUser.userID ,userFirstName: foundUser.userFirstName, userLastName: foundUser.userLastName, userEmail: foundUser.userEmail, loginStatus: true, userJoinDate: foundUser.userJoinDate};
+            res.send(resObject);
+            console.log("user fetched");
+        }
+        else{
+            let resObject = {userID:foundUser.userID ,userFirstName: null, userLastName: null, userEmail: null, loginStatus: false, userJoinDate: null};
+            res.send(resObject);
+            console.log("No user found");
+        }
+    })
+
+})
 
 function makeid(length) {
     var result           = '';
