@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@material-ui/core/styles";
@@ -19,6 +19,8 @@ import DesktopTimePicker from "@material-ui/lab/DesktopTimePicker";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import AppointmentCard from "./AppointmentCard";
+import axios from "axios";
+import { matchPath, useLocation } from "react-router-dom";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,8 +56,8 @@ function a11yProps(index) {
 
 function EditSlot(props) {
   const theme = useTheme();
+  const location = useLocation();
   const [value, setValue] = React.useState(0);
-  const [sunday, setSunday] = useState([]);
   const [data, setData] = useState({
     startTime: new Date(),
     endTime: new Date(),
@@ -92,15 +94,38 @@ function EditSlot(props) {
 
   function handleClick(event) {
     setData((prev) => {
+      const appointmentID = makeid(3);
       const temp = { ...prev };
       temp.days[value].push({
-        key: makeid(3),
+        key: appointmentID,
         startTime: data.startTime,
         endTime: data.endTime,
+        appointmentID: appointmentID,
       });
       return temp;
     });
-    console.log(data);
+  }
+
+  async function handleSaveChanges() {
+    try {
+      const match = matchPath(location.pathname, {
+        path: "/edit-slot/:doctorID",
+        exact: true,
+        strict: false,
+      });
+      const response = await axios.post(
+        "/edit-slot/" + match.params.doctorID,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -136,18 +161,20 @@ function EditSlot(props) {
               return (
                 <TabPanel
                   key={item.tabIndex}
-                  value={value}
+                  value={item.tabIndex}
                   index={item.tabIndex}
                   dir={theme.direction}
                 >
-                  {console.log(item.tabIndex)}
-                  <Stack spacing={3}>
-                    {data.days[item.tabIndex].map((cardData) => {
+                  <Stack component={"span"} spacing={3}>
+                    {data.days[value].map((cardData) => {
                       return (
                         <AppointmentCard
                           key={cardData.key}
                           startTime={cardData.startTime}
                           endTime={cardData.endTime}
+                          setData={setData}
+                          value={value}
+                          appointmentID={cardData.appointmentID}
                         />
                       );
                     })}
@@ -165,7 +192,11 @@ function EditSlot(props) {
               label="Start time"
               value={data.startTime}
               onChange={(newValue) => {
-                setData(newValue);
+                setData((prev) => {
+                  let temp = { ...prev };
+                  temp.startTime = newValue;
+                  return temp;
+                });
               }}
               renderInput={(params) => <TextField {...params} />}
             />
@@ -173,12 +204,19 @@ function EditSlot(props) {
               label="End time"
               value={data.endTime}
               onChange={(newValue) => {
-                setData(newValue);
+                setData((prev) => {
+                  let temp = { ...prev };
+                  temp.endTime = newValue;
+                  return temp;
+                });
               }}
               renderInput={(params) => <TextField {...params} />}
             />
             <Button variant="outlined" onClick={handleClick}>
               Add slot
+            </Button>
+            <Button variant="outlined" onClick={handleSaveChanges}>
+              Save Changes
             </Button>
           </Stack>
         </Box>

@@ -1,55 +1,56 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import styles from "./LoginStyles.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import BasicDatePicker from "../Date/BasicDatePicker";
 
-function RegisterContainer(props){
+function RegisterContainer(props) {
   const [contact, setContact] = useState({
     fName: "",
     lName: "",
     email: "",
-    registrationPassword: ""
+    registrationPassword: "",
   });
 
   function handleChange(event) {
     const { name, value } = event.target;
 
-    setContact(prevValue => {
+    setContact((prevValue) => {
       return {
         ...prevValue,
-        [name]: value
+        [name]: value,
       };
     });
   }
-  
-  function handleSubmit(event){
+
+  function handleSubmit(event) {
     const type = event.target.name;
-    if(type==="signupButton"){
-      console.log("calling from reg cont callHandleRegisterFromApp")
-      //props.callHandleRegisterFromApp(contact);
+    if (type === "signupButton") {
+      console.log("calling from reg cont callHandleRegisterFromApp");
       postServerRegister(contact);
     }
     event.preventDefault();
   }
 
-  async function postServerRegister(credentials){
-    try{
-        const response = await axios.post("/register", credentials, 
-        {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        console.log(response);
-    }
-    catch(error){
-        console.log(error);
+  async function postServerRegister(credentials) {
+    try {
+      const response = await axios.post("/register", credentials, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
     }
   }
 
   return (
-    <div className={["col-lg-6", styles.loginContainer, styles.container].join(" ")}>
+    <div
+      className={["col-lg-6", styles.loginContainer, styles.container].join(
+        " "
+      )}
+    >
       <h1>
         Hello {contact.fName} {contact.lName}
       </h1>
@@ -59,7 +60,7 @@ function RegisterContainer(props){
           onChange={handleChange}
           name="fName"
           value={contact.fName}
-          placeholder="First Name" 
+          placeholder="First Name"
           autoComplete="new-password"
         />
         <input
@@ -76,11 +77,22 @@ function RegisterContainer(props){
           placeholder="Email"
           autoComplete="new-password"
         />
-        <input onChange={handleChange} name="registrationPassword" placeholder="Password" autoComplete="off"  />
-        <button type="submit" onClick={handleSubmit} name="signupButton">Submit</button>
-        <Link to="/" style={{ textDecoration: 'none' }}><button type="submit" name="goToLoginButton">Go to login page</button></Link>
+        <input
+          onChange={handleChange}
+          name="registrationPassword"
+          placeholder="Password"
+          autoComplete="off"
+        />
+        <button type="submit" onClick={handleSubmit} name="signupButton">
+          Submit
+        </button>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <button type="submit" name="goToLoginButton">
+            Go to login page
+          </button>
+        </Link>
       </form>
-      </div>
+    </div>
   );
 }
 

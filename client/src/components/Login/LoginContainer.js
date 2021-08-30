@@ -1,89 +1,91 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styles from "./LoginStyles.module.css";
 const axios = require("axios");
 
-function LoginContainer(props){
+function LoginContainer(props) {
   const [contact, setContact] = useState({
     email: "",
     loginPassword: "",
-    status:""
+    status: "",
   });
   let history = useHistory();
 
   function handleChange(event) {
     const { name, value } = event.target;
 
-    setContact(prevValue => {
+    setContact((prevValue) => {
       return {
         ...prevValue,
-        [name]: value
+        [name]: value,
       };
     });
   }
 
-  function setStatus(){
-    setContact(prevValue=>{
+  function setStatus() {
+    setContact((prevValue) => {
       return {
         ...prevValue,
-        status: "Login failed."
-      }
-    })
+        status: "Login failed.",
+      };
+    });
   }
 
-  function handleClick(event)
-  {
+  function handleClick(event) {
     const type = event.target.name;
     const success = validation();
     event.preventDefault();
-    if(success === false){
+    if (success === false) {
       setStatus();
-      return
-    }
-    else if(success=== true && type==="submit"){
-      postServerLogin({email: contact.email, loginPassword: contact.loginPassword});
+      return;
+    } else if (success === true && type === "submit") {
+      postServerLogin({
+        email: contact.email,
+        loginPassword: contact.loginPassword,
+      });
     }
     event.preventDefault();
   }
-  
-  function validation(){
-    if(contact.email===null || contact.email===""){
+
+  function validation() {
+    if (contact.email === null || contact.email === "") {
       return false;
-    }
-    else if(contact.loginPassword===null || contact.email===""){
+    } else if (contact.loginPassword === null || contact.email === "") {
       return false;
-    }
-    else return true;
+    } else return true;
   }
 
-  async function postServerLogin(credentials){
-    try{
-        const response = await axios.post("/Login", credentials,  {
-            headers: {
-              'Content-Type': 'application/json'
-            }
+  async function postServerLogin(credentials) {
+    try {
+      const response = await axios.post("/Login", credentials, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      if (response.data.loginStatus === true) {
+        //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
+        const loadUserPage = () =>
+          history.push({
+            pathname: "/user-page/" + response.data.userID,
+            state: { data: response.data },
           });
-        console.log(response);
-        if(response.data.loginStatus===true){
-            //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
-            const loadUserPage = ()=> history.push({pathname:"/user-page/" + response.data.userID, state: {data:response.data} });
-            loadUserPage();
-        }
-        else{
-          setStatus();
-        }
-        
-    }
-    catch(error){
-        console.log(error);
+        loadUserPage();
+      } else {
+        setStatus();
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   return (
-    <div className={["col-lg-6", styles.loginContainer, styles.container].join(" ")}>
-      <h1>
-        Login
-      </h1>
+    <div
+      className={["col-lg-6", styles.loginContainer, styles.container].join(
+        " "
+      )}
+    >
+      <h1>Login</h1>
       <p>{contact.email}</p>
       <form>
         <input
@@ -93,9 +95,21 @@ function LoginContainer(props){
           placeholder="Email"
           autoComplete="off"
         />
-        <input onChange={handleChange} type="password" name="loginPassword" placeholder="Password" autoComplete="off"/>
-        <button type="submit" onClick={handleClick} name="submit">Submit</button>
-        <Link to="/register" style={{ textDecoration: 'none' }}><button type="submit" name="signupButton">Sign Up</button></Link>
+        <input
+          onChange={handleChange}
+          type="password"
+          name="loginPassword"
+          placeholder="Password"
+          autoComplete="off"
+        />
+        <button type="submit" onClick={handleClick} name="submit">
+          Submit
+        </button>
+        <Link to="/register" style={{ textDecoration: "none" }}>
+          <button type="submit" name="signupButton">
+            Sign Up
+          </button>
+        </Link>
         <h3>{contact.status}</h3>
       </form>
     </div>
