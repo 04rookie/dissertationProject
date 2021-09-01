@@ -21,6 +21,8 @@ import Button from "@material-ui/core/Button";
 import AppointmentCard from "./AppointmentCard";
 import axios from "axios";
 import { matchPath, useLocation } from "react-router-dom";
+import format from "date-fns/format";
+import { intervalToDuration, isAfter, isBefore, isEqual } from "date-fns";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,6 +58,7 @@ function a11yProps(index) {
 
 function EditSlot(props) {
   const theme = useTheme();
+  const [errorMessage, setErrorMessage] = useState("");
   const location = useLocation();
   const [value, setValue] = React.useState(0);
   const [data, setData] = useState({
@@ -93,6 +96,10 @@ function EditSlot(props) {
   }
 
   function handleClick(event) {
+    const success = validationOfDuration();
+    if(!success){
+      return(false)
+    }
     setData((prev) => {
       const appointmentID = makeid(3);
       const temp = { ...prev };
@@ -106,6 +113,27 @@ function EditSlot(props) {
     });
   }
 
+  function validationOfDuration(){
+    if(isAfter(data.startTime, data.endTime)||isEqual(data.startTime, data.endTime))
+    {
+      setErrorMessage("Failed to register, ensure that start time is before end time.")
+      return false;
+    }
+    console.log(intervalToDuration({start: data.startTime, end: data.endTime}).hours);
+    if((intervalToDuration({start: data.startTime, end: data.endTime})).hours>4)
+    {
+      setErrorMessage("Failed to register, max duration allowed is 4 hours.")
+      return false;
+    }
+    for(let counter = 0; counter<data.days[value].length; counter++){
+      if(!(isBefore(data.endTime, data.days[value][counter].startTime) || isAfter(data.startTime, data.days[value][counter].endTime))){
+        setErrorMessage("Failed to register, ensure that new slot you make does not collide with other ones you have created")
+        return false
+      }
+    }
+    return true
+  }
+
   async function handleSaveChanges() {
     try {
       const match = matchPath(location.pathname, {
@@ -113,9 +141,18 @@ function EditSlot(props) {
         exact: true,
         strict: false,
       });
+      let request = [[],[],[],[],[],[],[]];
+      for(let outer=0; outer<data.days.length; outer++){
+        for(let inner=0; inner<data.days[outer].length; inner++){
+          let startTimeString = format(data.days[outer][inner].startTime, 'hh:mm');
+          let endTimeString = format(data.days[outer][inner].endTime, 'hh:mm');
+          request[outer].push({startTime: startTimeString, endTime: endTimeString});
+        }
+      }
+      //console.log(request);
       const response = await axios.post(
         "/edit-slot/" + match.params.doctorID,
-        data,
+        request,
         {
           headers: {
             "Content-Type": "application/json",
@@ -194,6 +231,7 @@ function EditSlot(props) {
               onChange={(newValue) => {
                 setData((prev) => {
                   let temp = { ...prev };
+                  //let newValueAsString = format(newValue, 'hh:mm');
                   temp.startTime = newValue;
                   return temp;
                 });
@@ -218,6 +256,9 @@ function EditSlot(props) {
             <Button variant="outlined" onClick={handleSaveChanges}>
               Save Changes
             </Button>
+            <div>
+              <p>{errorMessage}</p>
+            </div>
           </Stack>
         </Box>
       </Grid>

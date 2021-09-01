@@ -2,14 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 function DoctorRegistration() {
   const [doctor, setDoctor] = useState({
-    doctorName: "",
-    monday: [],
-    tuesday: [],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-    saturday: [],
-    sunday: [],
+    doctorName: ""
   });
 
   function handleChange(event) {

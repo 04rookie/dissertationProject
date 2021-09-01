@@ -9,9 +9,13 @@ app.use(express.static(path.join(__dirname, "/app")));
 const port = 5000;
 app.listen(process.env.PORT || port, ()=> console.log("Server started on port " + port));
 const date = require('date-and-time');
+const { format } = require("date-fns");
 
+//Connecting to mongo db on atlas.
 mongoose.connect("***REMOVED***", {useNewUrlParser: true, useUnifiedTopology: true});
 
+
+//Defining user Schema
 const userSchema = new mongoose.Schema({
     userID: String,
     userFirstName: String,
@@ -21,12 +25,16 @@ const userSchema = new mongoose.Schema({
     userJoinDate: String
 });
 
+//Creating model based on schema
 const User = mongoose.model("User", userSchema);
 
+
+//This route will serve homepage
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/app'))
 })
 
+//handling the post request to login
 app.post("/Login", (req, res) => {
     User.findOne({userEmail: req.body.email, userPassword: req.body.loginPassword}, (err, foundUser)=> {
         if(err){
@@ -46,6 +54,7 @@ app.post("/Login", (req, res) => {
     });
 });
 
+//handling the post request to register user
 app.post("/register", (req, res) => {
     console.log(req.body);
     const id = makeid(20);
@@ -67,6 +76,7 @@ app.post("/register", (req, res) => {
     });
 });
 
+//fetch user data for user page
 app.get("/user/:userID",(req, res)=>{
     const userID = req.params.userID;
     User.findOne({userID: userID}, (err, foundUser)=>{
@@ -85,9 +95,9 @@ app.get("/user/:userID",(req, res)=>{
             console.log("No user found");
         }
     })
-
 })
 
+// generates random string of given length
 function makeid(length) {
     var result           = '';
     var characters       = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -99,6 +109,7 @@ function makeid(length) {
    return result;
 }
 
+//creates room in metered
 async function postCreateRoom()
 {
     try{
@@ -120,6 +131,7 @@ async function postCreateRoom()
     }
 }
 
+//handles create room call to the api from front end
 app.post("/CreateRoom", (req, res)=>{
     console.log("inside server.js /CreateRoom");
     let dynamicRoomName = postCreateRoom().then((dynamicRoomName)=>{
@@ -128,6 +140,7 @@ app.post("/CreateRoom", (req, res)=>{
     });
 });
 
+//room schema
 const roomNameSchema = new mongoose.Schema({
     roomName: String
 })
@@ -147,32 +160,28 @@ app.post("/PushRoomName", (req, res)=>{
     });
 })
 
+//doctor schema
 const doctorSchema = new mongoose.Schema({
     doctorID: String,
     doctorName: String,
-    monday: Array,
-    wednesday: Array,
-    tuesday: Array,
-    thursday: Array,
-    friday: Array,
-    saturday: Array,
-    sunday: Array
+    appointment: [{
+        appointmentID: String,
+        day: Number,
+        startTime: String,
+        endTime: String,
+        status: String,
+        userID: String
+    }]
 })
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
 
+//generates a doctor with a unique id
 app.post("/register-doctor", (req, res)=>{
     const id = makeid(20);
     const newDoctor = new Doctor({
         doctorID: id,
-        doctorName: req.body.doctorName,
-        monday: req.body.monday,
-        wednesday: req.body.tuesday,
-        tuesday: req.body.wednesday,
-        thursday: req.body.thursday,
-        friday: req.body.friday,
-        saturday: req.body.saturday,
-        sunday:req.body.sunday});
+        doctorName: req.body.doctorName});
     newDoctor.save((err)=>{
         if(err){
             console.log(err);
@@ -185,6 +194,7 @@ app.post("/register-doctor", (req, res)=>{
     })
 })
 
+//to fetch data of a particular doctor
 app.get("/doctor/:doctorID",(req, res)=>{
     const doctorID = req.params.doctorID;
     Doctor.findOne({doctorID: doctorID}, (err, foundUser)=>{
@@ -202,4 +212,50 @@ app.get("/doctor/:doctorID",(req, res)=>{
         }
     })
 
+})
+
+
+//to make changes to doctor appointment schema
+app.post("/edit-slot/:doctorID", (req, res)=>{
+    const doctorID = req.params.doctorID;
+    console.log(req.body);
+    Doctor.findOne({doctorID: doctorID}, (err, foundUser)=>{
+        if(err){
+            console.log("Error inside findOne Query in server inside /editslot");
+            console.log(err);
+        }
+        else if(foundUser){
+            //console.log(req.body.days[0][0]);
+            //format(req.body.startTime, "hh:mm")
+            let appointmentObject = foundUser.appointment;
+            let data = {
+                appointmentID: null,
+                day: null,
+                startTime: null,
+                endTime: null,
+                status: null,
+                userID: null
+            };
+            let days = req.body;
+            for(let outer = 0; outer<days.length; outer++){
+                for(let inner = 0; inner<days[outer].length; inner++){
+                    data.day = outer;
+                    data.startTime = days[outer][inner].startTime;
+                    data.endTime = days[outer][inner].endTime
+                    data.status = "open";
+                    data.userID = null;
+                    appointmentObject.push(data);
+                }
+            }
+            console.log(appointmentObject);
+            //foundUser.save();
+            res.send(true);
+            console.log("posted user data to mongodb");
+        }
+        else{
+            res.send(false);
+            console.log("failed");
+        }
+    })
+    
 })

@@ -17,6 +17,7 @@ function AppointmentCard(props) {
       <CardContent>
         <Typography component={'span'} variant="body2">
           {/* Start time: {props.startTime} <br /> End time: {props.endTime} */}
+          {/* Start time: {props.startTime} */}
           Start time: {format(props.startTime, "hh:mm")}
           <br /> End time: {format(props.endTime, "hh:mm")}
         </Typography>

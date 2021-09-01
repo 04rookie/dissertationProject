@@ -3,7 +3,7 @@ import styles from "./LoginStyles.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import BasicDatePicker from "../Date/BasicDatePicker";
-
+//logic for register page
 function RegisterContainer(props) {
   const [contact, setContact] = useState({
     fName: "",

@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./LoginStyles.module.css";
 function IntroContainer() {
-  console.log(styles);
+  //component responsible for Carousel in login page
   return (
     <div className={["col-lg-6", styles.introContainer].join(" ")}>
       <div
