@@ -52,10 +52,6 @@ function App() {
           path="/edit-slot/:doctorID"
           render={(props) => <EditSlot />}
         />
-        <Route
-          exact
-          path="/lobby"
-          render={(props)=><Lobby/>}/>
       </Switch>
     </>
   );
