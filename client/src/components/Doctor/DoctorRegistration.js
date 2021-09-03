@@ -21,7 +21,7 @@ function DoctorRegistration() {
 
   async function postServerDoctor(doctor) {
     try {
-      const response = await axios.post("/register-doctor", doctor, {
+      const response = await axios.post("/api/register-doctor", doctor, {
         headers: {
           "Content-Type": "application/json",
         },

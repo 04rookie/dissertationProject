@@ -35,7 +35,7 @@ app.get('*', (req, res) => {
 })
 
 //handling the post request to login
-app.post("/Login", (req, res) => {
+app.post("/api/login", (req, res) => {
     User.findOne({userEmail: req.body.email, userPassword: req.body.loginPassword}, (err, foundUser)=> {
         if(err){
             console.log("Error inside findOne Query in server inside /Login");
@@ -55,7 +55,7 @@ app.post("/Login", (req, res) => {
 });
 
 //handling the post request to register user
-app.post("/register", (req, res) => {
+app.post("/api/register", (req, res) => {
     console.log(req.body);
     const id = makeid(20);
     const now = new Date();
@@ -77,7 +77,7 @@ app.post("/register", (req, res) => {
 });
 
 //fetch user data for user page
-app.get("/user/:userID",(req, res)=>{
+app.get("/api/user/:userID",(req, res)=>{
     const userID = req.params.userID;
     User.findOne({userID: userID}, (err, foundUser)=>{
         if(err){
@@ -177,7 +177,7 @@ const doctorSchema = new mongoose.Schema({
 const Doctor = mongoose.model("Doctor", doctorSchema);
 
 //generates a doctor with a unique id
-app.post("/register-doctor", (req, res)=>{
+app.post("/api/register-doctor", (req, res)=>{
     const id = makeid(20);
     const newDoctor = new Doctor({
         doctorID: id,
@@ -195,7 +195,7 @@ app.post("/register-doctor", (req, res)=>{
 })
 
 //to fetch data of a particular doctor
-app.get("/doctor/:doctorID",(req, res)=>{
+app.get("/api/doctor/:doctorID",(req, res)=>{
     const doctorID = req.params.doctorID;
     Doctor.findOne({doctorID: doctorID}, (err, foundUser)=>{
         if(err){
@@ -216,7 +216,7 @@ app.get("/doctor/:doctorID",(req, res)=>{
 
 
 //to make changes to doctor appointment schema
-app.post("/edit-slot/:doctorID", (req, res)=>{
+app.post("/api/edit-slot/:doctorID", (req, res)=>{
     const doctorID = req.params.doctorID;
     console.log(req.body);
     Doctor.findOne({doctorID: doctorID}, (err, foundUser)=>{
@@ -258,4 +258,20 @@ app.post("/edit-slot/:doctorID", (req, res)=>{
         }
     })
     
+})
+
+app.get("/api/doctor", (req, res)=>{
+    const skipValue = parseInt(req.query.skipValue);
+    Doctor.find({}, null, {skip: skipValue, limit:10}, (err, foundUser)=>{
+        if(err){
+            console.log(err);
+        }
+        else if(foundUser){
+            console.log("sending doctors");
+            res.send(foundUser);
+        }
+        else{
+            console.log("no users found in /doctor");
+        }
+    })
 })

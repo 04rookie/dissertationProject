@@ -151,7 +151,7 @@ function EditSlot(props) {
       }
       //console.log(request);
       const response = await axios.post(
-        "/edit-slot/" + match.params.doctorID,
+        "/api/edit-slot/" + match.params.doctorID,
         request,
         {
           headers: {

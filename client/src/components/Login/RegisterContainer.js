@@ -34,7 +34,7 @@ function RegisterContainer(props) {
 
   async function postServerRegister(credentials) {
     try {
-      const response = await axios.post("/register", credentials, {
+      const response = await axios.post("/api/register", credentials, {
         headers: {
           "Content-Type": "application/json",
         },

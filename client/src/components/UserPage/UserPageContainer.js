@@ -18,7 +18,7 @@ function UserPageContainer(){
 
     async function getServerUser(userID){
         try{
-            const response = await axios.get("/user/" + userID);
+            const response = await axios.get("/api/user/" + userID);
             console.log(response);
             setUserFirstName(response.data.userFirstName);
         }

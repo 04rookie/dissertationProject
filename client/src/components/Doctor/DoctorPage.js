@@ -30,7 +30,7 @@ function DoctorPage() {
 
   async function getServerDoctor(doctorID) {
     try {
-      const response = await axios.get("/doctor/" + doctorID);
+      const response = await axios.get("/api/doctor/" + doctorID);
       console.log(response);
       setDoctorName(response.data.doctorName);
     } catch (error) {

@@ -57,7 +57,7 @@ function LoginContainer(props) {
 
   async function postServerLogin(credentials) {
     try {
-      const response = await axios.post("/Login", credentials, {
+      const response = await axios.post("/api/login", credentials, {
         headers: {
           "Content-Type": "application/json",
         },
