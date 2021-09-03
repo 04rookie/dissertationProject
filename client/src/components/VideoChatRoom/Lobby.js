@@ -9,7 +9,7 @@ import Peer from "simple-peer";
 import io from "socket.io-client";
 import "./Lobby.css";
 
-const socket = io.connect('/')
+const socket = io.connect('https://instahelp-production-build.herokuapp.com/')
 function Lobby() {
   const [me, setMe] = useState("");
   const [stream, setStream] = useState();
