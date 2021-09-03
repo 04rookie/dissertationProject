@@ -9,7 +9,7 @@ import Peer from "simple-peer";
 import io from "socket.io-client";
 import "./Lobby.css";
 
-const socket = io.connect('https://instahelp-production-build.herokuapp.com/')
+const socket = io.connect('/')
 function Lobby() {
   const [me, setMe] = useState("");
   const [stream, setStream] = useState();
@@ -92,6 +92,9 @@ function Lobby() {
     connectionRef.current.destroy();
   };
 
+  function handleClickTextCopy(){
+      console.log(me);
+  }
   return (
     <>
       <h1 style={{ textAlign: "center", color: "#fff" }}>Zoomish</h1>
@@ -133,6 +136,7 @@ function Lobby() {
               variant="contained"
               color="primary"
               startIcon={<AssignmentIcon fontSize="large" />}
+              onClick={handleClickTextCopy}
             >
               Copy ID
             </Button>
