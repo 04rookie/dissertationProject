@@ -7,7 +7,7 @@ require('dotenv').config()
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/app")));
 const port = 5000;
-server.listen(process.env.PORT || port, ()=> console.log("Server started on port " + port));
+app.listen(process.env.PORT || port, ()=> console.log("Server started on port " + port));
 const date = require('date-and-time');
 const { format } = require("date-fns");
 

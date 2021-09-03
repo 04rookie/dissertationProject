@@ -9,7 +9,6 @@ import Appointment from "./Appointment/Appointment";
 import DoctorRegistration from "./Doctor/DoctorRegistration";
 import DoctorPage from "./Doctor/DoctorPage";
 import EditSlot from "./Doctor/EditSlot";
-import Lobby from "./VideoChatRoom/Lobby";
 //handles the Route requests of the page.
 function App() {
   return (
