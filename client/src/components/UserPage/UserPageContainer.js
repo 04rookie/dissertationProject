@@ -34,6 +34,7 @@ function UserPageContainer(){
     <form>
     <Link to="/video-chat-room" style={{ textDecoration: 'none' }}><button type="submit" name="Call">Call</button></Link>
     <Link to="/market" style={{textDecoration: "none"}}><button type="submit" name="Market">Market</button></Link>
+    <Link to="/lobby" style={{textDecoration: "none"}}><button type="submit" name="lobby">lobby</button></Link>
     </form>
     </div>;
 }
