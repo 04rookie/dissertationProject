@@ -276,7 +276,7 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
         }
       }
       console.log(appointmentObject);
-        foundUser.save();
+      foundUser.save();
       res.send(true);
       console.log("posted user data to mongodb");
     } else {
@@ -303,20 +303,53 @@ app.get("/api/doctor", (req, res) => {
 app.get("/api/booking/:doctorID", (req, res) => {
   const doctorIDRequest = req.params.doctorID;
   Doctor.findOne({ doctorID: doctorIDRequest }, (err, foundUser) => {
-      if(err){
-          console.log(err);
-          console.log("Error inside /booking");
-          res.send(null)
-      }
-      else if(foundUser){
-          res.send(foundUser);
-          console.log("Appointments fetched");
-      }
-      else{
-          console.log("user not found");
-          res.send(null)
-      }
+    if (err) {
+      console.log(err);
+      console.log("Error inside /booking");
+      res.send(null);
+    } else if (foundUser) {
+      foundUser.appointment = foundUser.appointment.filter((record) => {
+        return record.status === "open";
+      });
+      res.send(foundUser);
+      console.log("Appointments fetched");
+    } else {
+      console.log("user not found");
+      res.send(null);
+    }
   });
 });
 
-app.post("/api/booking/:doctorID");
+app.post("/api/booking/:doctorID", (req, res) => {
+  const doctorIDRequest = req.params.doctorID;
+  let data = [];
+  req.body.map((days) => {
+    days.map((record) => {
+      if (record.status === "reserved") {
+        data.push(record);
+      }
+    });
+  });
+  Doctor.findOne({ doctorID: doctorIDRequest }, (err, foundUser) => {
+    if (err) {
+      console.log(err);
+      console.log("Error inside /booking/:doctorID");
+      res.send(null);
+    } else if (foundUser) {
+      data.map((newData) => {
+        foundUser.appointment = foundUser.appointment.map((record) => {
+          if (
+            newData.startTime === record.startTime &&
+            newData.day === record.day
+          ) {
+            record = newData;
+          }
+          return record;
+        });
+      });
+      foundUser.save();
+    } else {
+      console.log("User not found inside /booking/:doctorID");
+    }
+  });
+});

@@ -31,7 +31,6 @@ function AppointmentCard(props) {
         return [...prev];
       });
     }
-    //const response = postServerAppointment();
   }
 
   function makeid(length) {
@@ -44,22 +43,6 @@ function AppointmentCard(props) {
     return result;
   }
 
-  async function postServerAppointment() {
-    try {
-      const response = axios.post(
-        "/api/booking/" + props.doctorID,
-        props.appointmentData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  }
   return (
     <Card>
       <CardContent>
