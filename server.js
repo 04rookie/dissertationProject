@@ -320,7 +320,7 @@ app.get("/api/booking/:doctorID", (req, res) => {
   });
 });
 
-app.post("/api/booking/:doctorID", (req, res) => {
+app.patch("/api/booking/:doctorID", (req, res) => {
   const doctorIDRequest = req.params.doctorID;
   let data = [];
   req.body.map((days) => {

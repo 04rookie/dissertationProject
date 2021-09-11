@@ -106,7 +106,7 @@ function Booking() {
 
   async function postServerAppointment() {
     try {
-      const response = axios.post(
+      const response = axios.patch(
         "/api/booking/" + doctorID,
         data,
         {
