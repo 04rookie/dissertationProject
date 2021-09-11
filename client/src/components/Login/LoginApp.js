@@ -6,7 +6,7 @@ function LoginApp(props) {
   //login page
   return (
     <div className={["row", styles.loginAppContainer].join(" ")}>
-      <LoginContainer />
+      <LoginContainer setLoginContext={props.setLoginContext}/>
       <IntroContainer />
     </div>
   );

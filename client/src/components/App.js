@@ -9,49 +9,65 @@ import Appointment from "./Appointment/Appointment";
 import DoctorRegistration from "./Doctor/DoctorRegistration";
 import DoctorPage from "./Doctor/DoctorPage";
 import EditSlot from "./Doctor/EditSlot";
+import Booking from "./Booking/Booking";
+import CurrentUserId from "./Context/CurrentUserId";
 //handles the Route requests of the page.
 function App() {
+  const [loginContext, setLoginContext] = React.useState(null);
   return (
     <>
-      <Switch>
-        <Route
-          exact
-          path="/"
-          render={(props) => <LoginApp {...props} />}
-        ></Route>
-        <Route
-          exact
-          path="/user-page/:userID"
-          render={(props) => <UserPageContainer {...props} />}
-        ></Route>
-        <Route
-          exact
-          path="/register"
-          render={(props) => <RegisterApp {...props} />}
-        />
-        <Route
-          exact
-          path="/video-chat-room"
-          render={(props) => <VideoChatRoom {...props} />}
-        ></Route>
-        <Route exact path="/market" render={(props) => <Market />} />
-        <Route exact path="/appointment" render={(props) => <Appointment />} />
-        <Route
-          exact
-          path="/doctor/registration"
-          render={(props) => <DoctorRegistration />}
-        />
-        <Route
-          exact
-          path="/doctor/:doctorID"
-          render={(props) => <DoctorPage {...props} />}
-        />
-        <Route
-          exact
-          path="/edit-slot/:doctorID"
-          render={(props) => <EditSlot />}
-        />
-      </Switch>
+      <CurrentUserId.Provider value={loginContext}>
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={(props) => (
+              <LoginApp {...props} setLoginContext={setLoginContext} />
+            )}
+          ></Route>
+          <Route
+            exact
+            path="/user-page/:userID"
+            render={(props) => <UserPageContainer {...props} />}
+          ></Route>
+          <Route
+            exact
+            path="/register"
+            render={(props) => <RegisterApp {...props} />}
+          />
+          <Route
+            exact
+            path="/video-chat-room"
+            render={(props) => <VideoChatRoom {...props} />}
+          ></Route>
+          <Route exact path="/market" render={(props) => <Market />} />
+          <Route
+            exact
+            path="/appointment"
+            render={(props) => <Appointment />}
+          />
+          <Route
+            exact
+            path="/doctor/registration"
+            render={(props) => <DoctorRegistration />}
+          />
+          <Route
+            exact
+            path="/doctor/:doctorID"
+            render={(props) => <DoctorPage {...props} />}
+          />
+          <Route
+            exact
+            path="/edit-slot/:doctorID"
+            render={(props) => <EditSlot />}
+          />
+          <Route
+            exact
+            path="/booking/:doctorID"
+            render={(props) => <Booking />}
+          />
+        </Switch>
+      </CurrentUserId.Provider>
     </>
   );
 }

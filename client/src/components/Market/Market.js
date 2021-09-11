@@ -5,7 +5,7 @@ import axios from "axios";
 import MarketDoctorCard from "./MarketDoctorCard";
 function Market() {
   const [doctorID, setDoctorID] = useState("");
-  let history = useHistory;
+  let history = useHistory();
   const [skipValue, setSkipValue] = useState(0);
   const limitValue = 10;
   const [marketData, setMarketData] = useState([]);
@@ -54,7 +54,6 @@ function Market() {
       </form>
       <Stack spacing={3}>
         {marketData.map((cardData) => {
-          console.log(cardData.doctorID)
           return <MarketDoctorCard key={cardData.doctorID} doctorID={cardData.doctorID} doctorName={cardData.doctorName}/>;
         })}
       </Stack>

@@ -62,9 +62,9 @@ function LoginContainer(props) {
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       if (response.data.loginStatus === true) {
         //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
+        props.setLoginContext(response.data.userID)
         const loadUserPage = () =>
           history.push({
             pathname: "/user-page/" + response.data.userID,

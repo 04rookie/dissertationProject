@@ -19,7 +19,6 @@ function UserPageContainer(){
     async function getServerUser(userID){
         try{
             const response = await axios.get("/api/user/" + userID);
-            console.log(response);
             setUserFirstName(response.data.userFirstName);
         }
         catch(error){
@@ -27,7 +26,6 @@ function UserPageContainer(){
         }
     }
 
-    console.log(location);
     return <div>
     <UserPageHeader userFirstName={userFirstName} defaultAvatar={defaultAvatar}/>
     <UserPageInfo/>
