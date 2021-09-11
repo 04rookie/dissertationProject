@@ -142,7 +142,7 @@ function makeid(length) {
 //creates room in metered
 async function postCreateRoom() {
   try {
-    let dynamicRoomName = makeid(10);
+    let dynamicRoomName = makeid(20);
     const data = { roomName: dynamicRoomName };
     console.log("inside postCreateRoom Server.js beforePOST");
     const response = await axios.post(
@@ -318,3 +318,5 @@ app.get("/api/booking/:doctorID", (req, res) => {
       }
   });
 });
+
+app.post("/api/booking/:doctorID");

@@ -101,7 +101,7 @@ function EditSlot(props) {
       return(false)
     }
     setData((prev) => {
-      const appointmentID = makeid(3);
+      const appointmentID = makeid(20);
       const temp = { ...prev };
       temp.days[value].push({
         key: appointmentID,

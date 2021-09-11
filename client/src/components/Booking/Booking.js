@@ -50,14 +50,16 @@ function Booking() {
     getServerDoctorAppointment();
   }, []);
 
+  const match = matchPath(location.pathname, {
+    path: "/booking/:doctorID",
+    exact: true,
+    strict: false,
+  });
+  const doctorID = match.params.doctorID;
+
   async function getServerDoctorAppointment() {
-    const match = matchPath(location.pathname, {
-      path: "/booking/:doctorID",
-      exact: true,
-      strict: false,
-    });
-    const doctorID = match.params.doctorID;
     const response = await axios.get("/api/booking/" + doctorID);
+    console.log(response)
     response.data.appointment.map((cardData) => {
       setData((prev) => {
         prev[cardData.day].push(cardData);
@@ -111,7 +113,7 @@ function Booking() {
           {tabData.map((item) => {
             return (
               <Tab
-                key={makeid(8)}
+                key={makeid(20)}
                 label={item.label}
                 {...a11yProps(item.tabIndex)}
               />
@@ -127,7 +129,7 @@ function Booking() {
         {tabData.map((item) => {
           return (
             <TabPanel
-              key={makeid(8)}
+              key={makeid(20)}
               value={item.tabIndex}
               index={item.tabIndex}
               dir={theme.direction}
@@ -136,12 +138,10 @@ function Booking() {
                 {data[value].map((cardData) => {
                   return (
                     <AppointmentCard
-                      key={makeid(8)}
-                      startTime={cardData.startTime}
-                      endTime={cardData.endTime}
+                      key={makeid(20)}
+                      doctorID={doctorID}
+                      appointmentData={cardData}
                       setData={setData}
-                      value={value}
-                      appointmentID={cardData.appointmentID}
                     />
                   );
                 })} 
