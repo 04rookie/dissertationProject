@@ -25,9 +25,7 @@ function UserPageInfo(){
             </Paper>
         </Box>
         <Box>
-        <Typography sx={{textAlign:"center"}} variant="body1" gutterBottom>
-                            Hello
-                        </Typography>
+        
         </Box>
     </Stack>
 }

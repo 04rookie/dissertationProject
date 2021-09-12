@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styles from "./LoginStyles.module.css";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import { Box } from "@material-ui/core";
 const axios = require("axios");
 //logic for login page
 function LoginContainer(props) {
@@ -9,6 +13,7 @@ function LoginContainer(props) {
     loginPassword: "",
     status: "",
   });
+  const [isDoctor, setIsDoctor] = useState(false);
   let history = useHistory();
 
   function handleChange(event) {
@@ -39,10 +44,18 @@ function LoginContainer(props) {
       setStatus();
       return;
     } else if (success === true && type === "submit") {
-      postServerLogin({
-        email: contact.email,
-        loginPassword: contact.loginPassword,
-      });
+      if (!isDoctor) {
+        postServerLogin({
+          email: contact.email,
+          loginPassword: contact.loginPassword,
+        });
+      }
+      else{
+        postServerDoctorLogin({
+          email: contact.email,
+          loginPassword: contact.loginPassword,
+        })
+      }
     }
     event.preventDefault();
   }
@@ -64,10 +77,34 @@ function LoginContainer(props) {
       });
       if (response.data.loginStatus === true) {
         //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
-        props.setLoginContext(response.data.userID)
+        props.setLoginContext(response.data.userID);
         const loadUserPage = () =>
           history.push({
             pathname: "/user-page/" + response.data.userID,
+            state: { data: response.data },
+          });
+        loadUserPage();
+      } else {
+        setStatus();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function postServerDoctorLogin(credentials) {
+    try {
+      const response = await axios.post("/api/login/doctor", credentials, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.loginStatus === true) {
+        //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
+        props.setLoginContext(response.data.userID);
+        const loadUserPage = () =>
+          history.push({
+            pathname: "/doctor/" + response.data.doctorID,
             state: { data: response.data },
           });
         loadUserPage();
@@ -102,6 +139,20 @@ function LoginContainer(props) {
           placeholder="Password"
           autoComplete="off"
         />
+        <Box>
+          <FormGroup>
+            <FormControlLabel
+              sx={{ mx: "auto" }}
+              control={<Checkbox />}
+              label="Are you a doctor?"
+              onClick={() =>
+                setIsDoctor((prev) => {
+                  return prev ? false : true;
+                })
+              }
+            />
+          </FormGroup>
+        </Box>
         <button type="submit" onClick={handleClick} name="submit">
           Submit
         </button>

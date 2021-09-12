@@ -71,6 +71,38 @@ app.post("/api/login", (req, res) => {
   );
 });
 
+app.post("/api/login/doctor", (req, res) => {
+  Doctor.findOne(
+    { doctorEmail: req.body.email, doctorPassword: req.body.loginPassword },
+    (err, foundUser) => {
+      if (err) {
+        console.log("Error inside findOne Query in server inside /Login/doctor");
+        console.log(err);
+      } else if (foundUser) {
+        let resObject = {
+          doctorID: foundUser.doctorID,
+          doctorFirstName: foundUser.doctorFirstName,
+          doctorLastName: foundUser.doctorLastName,
+          doctorEmail: foundUser.doctorEmail,
+          loginStatus: true,
+        };
+        res.send(resObject);
+        console.log("Login Successful");
+      } else {
+        let resObject = {
+          doctorID: foundUser.doctorID,
+          doctorFirstName: null,
+          doctorLastName: null,
+          doctorEmail: null,
+          loginStatus: false,
+        };
+        res.send(resObject);
+        console.log("Login Failed");
+      }
+    }
+  );
+});
+
 //handling the post request to register user
 app.post("/api/register", (req, res) => {
   console.log(req.body);
@@ -195,7 +227,10 @@ app.post("/PushRoomName", (req, res) => {
 //doctor schema
 const doctorSchema = new mongoose.Schema({
   doctorID: String,
-  doctorName: String,
+  doctorFirstName: String,
+  doctorLastName: String,
+  doctorPassword: String,
+  doctorEmail: String,
   appointment: [
     {
       appointmentID: String,
@@ -215,7 +250,10 @@ app.post("/api/register-doctor", (req, res) => {
   const id = makeid(20);
   const newDoctor = new Doctor({
     doctorID: id,
-    doctorName: req.body.doctorName,
+    doctorFirstName: req.body.doctorFirstName,
+    doctorLastName: req.body.doctorLastName,
+    doctorPassword: req.body.doctorPassword,
+    doctorEmail: req.body.doctorEmail,
   });
   newDoctor.save((err) => {
     if (err) {

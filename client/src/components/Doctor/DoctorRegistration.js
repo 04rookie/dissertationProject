@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 function DoctorRegistration() {
   const [doctor, setDoctor] = useState({
-    doctorName: ""
+    doctorFirstName: "",
+    doctorLastName: "",
+    doctorEmail: "",
+    doctorPassword: "",
   });
 
   function handleChange(event) {
@@ -34,11 +37,33 @@ function DoctorRegistration() {
   return (
     <div>
       <form>
+      fname
         <input
           type="text"
-          name="doctorName"
+          name="doctorFirstName"
           onChange={handleChange}
-          value={doctor.doctorName}
+          value={doctor.doctorFirstName}
+        />
+        lname
+        <input
+          type="text"
+          name="doctorLastName"
+          onChange={handleChange}
+          value={doctor.doctorLastName}
+        />
+        pass
+        <input
+          type="text"
+          name="doctorPassword"
+          onChange={handleChange}
+          value={doctor.doctorPassword}
+        />
+        email
+        <input
+          type="text"
+          name="doctorEmail"
+          onChange={handleChange}
+          value={doctor.doctorEmail}
         />
         <input type="submit" name="submit" onClick={handleSubmit} />
       </form>{" "}

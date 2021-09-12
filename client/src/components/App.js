@@ -49,7 +49,7 @@ function App() {
           />
           <Route
             exact
-            path="/doctor/registration"
+            path="/admin/doctor/registration"
             render={(props) => <DoctorRegistration />}
           />
           <Route
