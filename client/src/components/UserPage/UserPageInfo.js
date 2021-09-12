@@ -25,7 +25,6 @@ function UserPageInfo(){
             </Paper>
         </Box>
         <Box>
-        
         </Box>
     </Stack>
 }

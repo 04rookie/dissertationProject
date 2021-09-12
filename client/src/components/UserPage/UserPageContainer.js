@@ -20,6 +20,7 @@ function UserPageContainer(){
         try{
             const response = await axios.get("/api/user/" + userID);
             setUserFirstName(response.data.userFirstName);
+            console.log(response.data);
         }
         catch(error){
             console.log(error);

@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   userEmail: String,
   userPassword: String,
   userJoinDate: String,
-  userSubscription: [String],
+  userSubscription: [{doctorID: String, appointmentID: String}],
 });
 
 //Creating model based on schema
@@ -47,12 +47,18 @@ app.post("/api/login", (req, res) => {
         console.log("Error inside findOne Query in server inside /Login");
         console.log(err);
       } else if (foundUser) {
+        const userSubscription = null;
+        console.log(foundUser.userSubscription);
+        if (!foundUser.userSubscription.length === 0) {
+          userSubscription = foundUser.userSubscription;
+        }
         let resObject = {
           userID: foundUser.userID,
           userFirstName: foundUser.userFirstName,
           userLastName: foundUser.userLastName,
           userEmail: foundUser.userEmail,
           loginStatus: true,
+          userSubscription: userSubscription,
         };
         res.send(resObject);
         console.log("Login Successful");
@@ -76,7 +82,9 @@ app.post("/api/login/doctor", (req, res) => {
     { doctorEmail: req.body.email, doctorPassword: req.body.loginPassword },
     (err, foundUser) => {
       if (err) {
-        console.log("Error inside findOne Query in server inside /Login/doctor");
+        console.log(
+          "Error inside findOne Query in server inside /Login/doctor"
+        );
         console.log(err);
       } else if (foundUser) {
         let resObject = {
@@ -143,6 +151,7 @@ app.get("/api/user/:userID", (req, res) => {
         userEmail: foundUser.userEmail,
         loginStatus: true,
         userJoinDate: foundUser.userJoinDate,
+        userSubscription: foundUser.userSubscription,
       };
       res.send(resObject);
       console.log("user fetched");
@@ -154,6 +163,7 @@ app.get("/api/user/:userID", (req, res) => {
         userEmail: null,
         loginStatus: false,
         userJoinDate: null,
+        userSubscription: null,
       };
       res.send(resObject);
       console.log("No user found");
@@ -369,17 +379,16 @@ app.patch("/api/booking/:doctorID", (req, res) => {
       }
     });
   });
-  data.map((record)=>{
-    User.findOne({userID: record.userID}, (err, foundUser)=>{
-      if(err || !foundUser){
+  data.map((record) => {
+    User.findOne({ userID: record.userID }, (err, foundUser) => {
+      if (err || !foundUser) {
         console.log("Error inside  /booking/:doctorID");
+      } else if (foundUser) {
+        foundUser.userSubscription.push({doctorID: doctorIDRequest, appointmentID: record.appointmentID});
+        foundUser.save();
       }
-      else if(foundUser){
-        foundUser.userSubscription.push(record.appointmentID);
-      }
-      foundUser.save();
-    })
-  })
+    });
+  });
   Doctor.findOne({ doctorID: doctorIDRequest }, (err, foundUser) => {
     if (err) {
       console.log(err);
