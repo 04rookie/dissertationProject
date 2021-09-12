@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
   userEmail: String,
   userPassword: String,
   userJoinDate: String,
+  userSubscription: [String],
 });
 
 //Creating model based on schema
@@ -330,6 +331,17 @@ app.patch("/api/booking/:doctorID", (req, res) => {
       }
     });
   });
+  data.map((record)=>{
+    User.findOne({userID: record.userID}, (err, foundUser)=>{
+      if(err || !foundUser){
+        console.log("Error inside  /booking/:doctorID");
+      }
+      else if(foundUser){
+        foundUser.userSubscription.push(record.appointmentID);
+      }
+      foundUser.save();
+    })
+  })
   Doctor.findOne({ doctorID: doctorIDRequest }, (err, foundUser) => {
     if (err) {
       console.log(err);
