@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   userEmail: String,
   userPassword: String,
   userJoinDate: String,
-  userSubscription: [{doctorID: String, appointmentID: String}],
+  userSubscription: [{ doctorID: String, appointmentID: String }],
 });
 
 //Creating model based on schema
@@ -48,7 +48,6 @@ app.post("/api/login", (req, res) => {
         console.log(err);
       } else if (foundUser) {
         const userSubscription = null;
-        console.log(foundUser.userSubscription);
         if (!foundUser.userSubscription.length === 0) {
           userSubscription = foundUser.userSubscription;
         }
@@ -139,11 +138,31 @@ app.post("/api/register", (req, res) => {
 //fetch user data for user page
 app.get("/api/user/:userID", (req, res) => {
   const userID = req.params.userID;
-  User.findOne({ userID: userID }, (err, foundUser) => {
+  User.findOne({ userID: userID }, async (err, foundUser) => {
     if (err) {
       console.log("Error inside findOne Query in server inside /user");
       console.log(err);
     } else if (foundUser) {
+      let doctorIDs = [];
+      foundUser.userSubscription.forEach((record) => {
+        doctorIDs.push(record.doctorID);
+      });
+      const records = await Doctor.find({ doctorID: { $in: doctorIDs } });
+      let doctorAppointments = [];
+      var foundDoc = null;
+      foundUser.userSubscription.forEach((sub) => {
+        foundDoc = records.filter((doctor) => {
+          return doctor.doctorID === sub.doctorID;
+        });
+        foundDoc = foundDoc[0];
+        const appointmentObject = foundDoc.appointment.filter(
+          (appointmentObject) => {
+            return appointmentObject.appointmentID === sub.appointmentID;
+          }
+        );
+        doctorAppointments.push(appointmentObject[0]);
+      });
+      console.log(doctorAppointments);
       let resObject = {
         userID: foundUser.userID,
         userFirstName: foundUser.userFirstName,
@@ -151,7 +170,7 @@ app.get("/api/user/:userID", (req, res) => {
         userEmail: foundUser.userEmail,
         loginStatus: true,
         userJoinDate: foundUser.userJoinDate,
-        userSubscription: foundUser.userSubscription,
+        userSubscription: doctorAppointments,
       };
       res.send(resObject);
       console.log("user fetched");
@@ -384,7 +403,10 @@ app.patch("/api/booking/:doctorID", (req, res) => {
       if (err || !foundUser) {
         console.log("Error inside  /booking/:doctorID");
       } else if (foundUser) {
-        foundUser.userSubscription.push({doctorID: doctorIDRequest, appointmentID: record.appointmentID});
+        foundUser.userSubscription.push({
+          doctorID: doctorIDRequest,
+          appointmentID: record.appointmentID,
+        });
         foundUser.save();
       }
     });
