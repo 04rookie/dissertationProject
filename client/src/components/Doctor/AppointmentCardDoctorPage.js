@@ -12,8 +12,8 @@ function AppointmentCardDoctorPage(props) {
         <Typography component={"span"} variant="body2">
           {/* Start time: {props.startTime} <br /> End time: {props.endTime} */}
           {/* Start time: {props.startTime} */}
-          Start time: {props.startTime}
-          <br /> End time: {props.endTime}
+          Start time: {props.subs.startTime}
+          <br /> End time: {props.subs.endTime}
         </Typography>
       </CardContent>
       <CardActions>

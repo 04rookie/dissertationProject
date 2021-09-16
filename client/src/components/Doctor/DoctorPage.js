@@ -29,13 +29,23 @@ function DoctorPage() {
     });
     getServerDoctor(match.params.doctorID);
   }, []);
-
-  async function getServerDoctor(doctorID) {
+  
+  function makeid(length) {
+    var result = "";
+    var characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+  
+    async function getServerDoctor(doctorID) {
     try {
       const response = await axios.get("/api/doctor/" + doctorID);
       console.log(response);
       setDoctorName(response.data.doctorName);
-      setAppointment(response.data.appointment)
+      setAppointment(response.data.appointment);
     } catch (error) {
       console.log(error);
     }
@@ -49,9 +59,11 @@ function DoctorPage() {
       />
       <DoctorInfo />
       <Stack>
-        {appointment.map((subs)=>{return <AppointmentCardDoctorPage subs={subs}/>})}
+        {
+          appointment.map((subs) => {
+          return <AppointmentCardDoctorPage key={makeid(20)} subs={subs}/>;
+        })}
       </Stack>
-
     </div>
   );
 }
