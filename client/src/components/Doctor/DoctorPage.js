@@ -37,8 +37,6 @@ function DoctorPage() {
       console.log(error);
     }
   }
-
-  console.log(location);
   return (
     <div>
       <DoctorPageHeader

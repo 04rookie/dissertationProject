@@ -63,7 +63,7 @@ app.post("/api/login", (req, res) => {
         console.log("Login Successful");
       } else {
         let resObject = {
-          userID: foundUser.userID,
+          userID: null,
           userFirstName: null,
           userLastName: null,
           userEmail: null,
@@ -97,7 +97,7 @@ app.post("/api/login/doctor", (req, res) => {
         console.log("Login Successful");
       } else {
         let resObject = {
-          doctorID: foundUser.doctorID,
+          doctorID: null,
           doctorFirstName: null,
           doctorLastName: null,
           doctorEmail: null,
@@ -268,6 +268,7 @@ const doctorSchema = new mongoose.Schema({
       endTime: String,
       status: String,
       userID: String,
+      doctorID: String,
     },
   ],
 });
@@ -303,6 +304,7 @@ app.get("/api/doctor/:doctorID", (req, res) => {
       console.log("Error inside findOne Query in server inside /doctor");
       console.log(err);
     } else if (foundUser) {
+      foundUser.doctorPassword = null;
       res.send(foundUser);
       console.log("user fetched");
     } else {
@@ -315,7 +317,6 @@ app.get("/api/doctor/:doctorID", (req, res) => {
 //to make changes to doctor appointment schema
 app.post("/api/edit-slot/:doctorID", (req, res) => {
   const doctorID = req.params.doctorID;
-  console.log(req.body);
   Doctor.findOne({ doctorID: doctorID }, (err, foundUser) => {
     if (err) {
       console.log("Error inside findOne Query in server inside /editslot");
@@ -323,7 +324,9 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
     } else if (foundUser) {
       //console.log(req.body.days[0][0]);
       //format(req.body.startTime, "hh:mm")
+      foundUser.appointment = [];
       let appointmentObject = foundUser.appointment;
+      foundUser.markModified('appointment');
       let data = {
         appointmentID: null,
         day: null,
@@ -331,19 +334,24 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
         endTime: null,
         status: null,
         userID: null,
+        doctorID: null,
       };
       let days = req.body;
       for (let outer = 0; outer < days.length; outer++) {
         for (let inner = 0; inner < days[outer].length; inner++) {
-          data.day = outer;
+          data.appointmentID = days[outer][inner].appointmentID;
+          data.day = days[outer][inner].day;
           data.startTime = days[outer][inner].startTime;
           data.endTime = days[outer][inner].endTime;
-          data.status = "open";
-          data.userID = null;
+          data.status = days[outer][inner].status;
+          data.userID = days[outer][inner].userID;
+          data.doctorID = days[outer][inner].doctorID;
           appointmentObject.push(data);
+          //foundUser.markModified('appointment');
         }
       }
       console.log(appointmentObject);
+      //foundUser.markModified('appointment');
       foundUser.save();
       res.send(true);
       console.log("posted user data to mongodb");
@@ -353,6 +361,22 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
     }
   });
 });
+
+app.get("/api/edit-slot/:doctorID", (req, res)=>{
+  const reqDoctorId = req.params.doctorID;
+  Doctor.findOne({doctorID: reqDoctorId}, (err, foundUser)=>{
+    if(err){
+      console.log(err);
+      console.log("365");
+    }
+    else if(foundUser){
+      res.send(foundUser.appointment)
+    }
+    else{
+      console.log("371 error");
+    }
+  })
+})
 
 app.get("/api/doctor", (req, res) => {
   const skipValue = parseInt(req.query.skipValue);
@@ -380,7 +404,6 @@ app.get("/api/booking/:doctorID", (req, res) => {
         return record.status === "open";
       });
       res.send(foundUser);
-      console.log("Appointments fetched");
     } else {
       console.log("user not found");
       res.send(null);

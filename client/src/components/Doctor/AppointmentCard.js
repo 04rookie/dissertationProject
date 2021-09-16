@@ -4,18 +4,27 @@ import { Typography } from "@material-ui/core";
 import format from "date-fns/format";
 function AppointmentCard(props) {
   function handleClick() {
-    props.setData((prev) => {
-      const temp = { ...prev };
-      temp.days[props.value] = temp.days[props.value].filter((valueFilter) => {
-        return valueFilter.appointmentID !== props.appointmentID;
+    if (props.appointmentID === null && props.status === "open") {
+      props.setData((prev) => {
+        const temp = { ...prev };
+        temp.days[props.value] = temp.days[props.value].filter(
+          (valueFilter) => {
+            return valueFilter.appointmentID !== props.appointmentID;
+          }
+        );
+        return temp;
       });
-      return temp;
-    });
+    }
+    else{
+      console.log(props.appointmentID);
+      console.log(props.status);
+      console.log("cant update, slot already assigned");
+    }
   }
   return (
     <Card>
       <CardContent>
-        <Typography component={'span'} variant="body2">
+        <Typography component={"span"} variant="body2">
           {/* Start time: {props.startTime} <br /> End time: {props.endTime} */}
           {/* Start time: {props.startTime} */}
           Start time: {format(props.startTime, "hh:mm")}

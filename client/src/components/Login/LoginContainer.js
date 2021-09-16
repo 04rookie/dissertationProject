@@ -75,6 +75,7 @@ function LoginContainer(props) {
           "Content-Type": "application/json",
         },
       });
+      console.log(response.data);
       if (response.data.loginStatus === true) {
         //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
         props.setLoginContext(response.data.userID);
@@ -84,7 +85,8 @@ function LoginContainer(props) {
             state: { data: response.data },
           });
         loadUserPage();
-      } else {
+      } else if(response.data.loginStatus===false){
+        console.log(response.data.loginStatus)
         setStatus();
       }
     } catch (error) {
@@ -161,8 +163,8 @@ function LoginContainer(props) {
             Sign Up
           </button>
         </Link>
-        <h3>{contact.status}</h3>
       </form>
+      <h3>{contact.status}</h3>
     </div>
   );
 }

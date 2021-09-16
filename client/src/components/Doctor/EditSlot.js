@@ -67,6 +67,37 @@ function EditSlot(props) {
     days: [[], [], [], [], [], [], []],
   });
 
+  useEffect(() => {
+    getEditSlots().then((data) => {
+      let daysData = [[], [], [], [], [], [], []];
+      for (let i = 0; i < data.length; i++) {
+        data[i].startTime = new Date("01/01/1970 " + data[i].startTime);
+        data[i].endTime = new Date("01/01/1970 " + data[i].endTime);
+        daysData[data[i].day].push(data[i]);
+      }
+      console.log(daysData);
+      setData((prev) => {
+        return { ...prev, days: daysData };
+      });
+    });
+  }, []);
+
+  async function getEditSlots() {
+    try {
+      const match = matchPath(location.pathname, {
+        path: "/edit-slot/:doctorID",
+        exact: true,
+        strict: false,
+      });
+      const response = await axios.get(
+        "/api/edit-slot/" + match.params.doctorID
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -97,41 +128,64 @@ function EditSlot(props) {
 
   function handleClick(event) {
     const success = validationOfDuration();
-    if(!success){
-      return(false)
+    if (!success) {
+      return false;
     }
     setData((prev) => {
       const appointmentID = makeid(20);
       const temp = { ...prev };
+      const match = matchPath(location.pathname, {
+        path: "/edit-slot/:doctorID",
+        exact: true,
+        strict: false,
+      });
       temp.days[value].push({
         key: appointmentID,
         startTime: data.startTime,
         endTime: data.endTime,
-        appointmentID: appointmentID,
+        appointmentID: null,
+        doctorID: match.params.doctorID,
+        day: value,
+        status: "open",
+        userID: null,
       });
       return temp;
     });
   }
 
-  function validationOfDuration(){
-    if(isAfter(data.startTime, data.endTime)||isEqual(data.startTime, data.endTime))
-    {
-      setErrorMessage("Failed to register, ensure that start time is before end time.")
+  function validationOfDuration() {
+    if (
+      isAfter(data.startTime, data.endTime) ||
+      isEqual(data.startTime, data.endTime)
+    ) {
+      setErrorMessage(
+        "Failed to register, ensure that start time is before end time."
+      );
       return false;
     }
-    console.log(intervalToDuration({start: data.startTime, end: data.endTime}).hours);
-    if((intervalToDuration({start: data.startTime, end: data.endTime})).hours>4)
-    {
-      setErrorMessage("Failed to register, max duration allowed is 4 hours.")
+    console.log(
+      intervalToDuration({ start: data.startTime, end: data.endTime }).hours
+    );
+    if (
+      intervalToDuration({ start: data.startTime, end: data.endTime }).hours > 4
+    ) {
+      setErrorMessage("Failed to register, max duration allowed is 4 hours.");
       return false;
     }
-    for(let counter = 0; counter<data.days[value].length; counter++){
-      if(!(isBefore(data.endTime, data.days[value][counter].startTime) || isAfter(data.startTime, data.days[value][counter].endTime))){
-        setErrorMessage("Failed to register, ensure that new slot you make does not collide with other ones you have created")
-        return false
+    for (let counter = 0; counter < data.days[value].length; counter++) {
+      if (
+        !(
+          isBefore(data.endTime, data.days[value][counter].startTime) ||
+          isAfter(data.startTime, data.days[value][counter].endTime)
+        )
+      ) {
+        setErrorMessage(
+          "Failed to register, ensure that new slot you make does not collide with other ones you have created"
+        );
+        return false;
       }
     }
-    return true
+    return true;
   }
 
   async function handleSaveChanges() {
@@ -141,15 +195,26 @@ function EditSlot(props) {
         exact: true,
         strict: false,
       });
-      let request = [[],[],[],[],[],[],[]];
-      for(let outer=0; outer<data.days.length; outer++){
-        for(let inner=0; inner<data.days[outer].length; inner++){
-          let startTimeString = format(data.days[outer][inner].startTime, 'hh:mm');
-          let endTimeString = format(data.days[outer][inner].endTime, 'hh:mm');
-          request[outer].push({startTime: startTimeString, endTime: endTimeString});
+      let request = [[], [], [], [], [], [], []];
+      for (let outer = 0; outer < data.days.length; outer++) {
+        for (let inner = 0; inner < data.days[outer].length; inner++) {
+          let startTimeString = format(
+            data.days[outer][inner].startTime,
+            "hh:mm"
+          );
+          let endTimeString = format(data.days[outer][inner].endTime, "hh:mm");
+          request[outer].push({
+            startTime: startTimeString,
+            endTime: endTimeString,
+            doctorID: match.params.doctorID,
+            appointmentID: data.days[outer][inner].appointmentID,
+            day: data.days[outer][inner].day,
+            status: data.days[outer][inner].status,
+            userID: data.days[outer][inner].userID,
+          });
         }
       }
-      //console.log(request);
+      // console.log(request);
       const response = await axios.post(
         "/api/edit-slot/" + match.params.doctorID,
         request,
@@ -212,6 +277,7 @@ function EditSlot(props) {
                           setData={setData}
                           value={value}
                           appointmentID={cardData.appointmentID}
+                          status={cardData.status}
                         />
                       );
                     })}

@@ -59,14 +59,18 @@ function Booking() {
   const doctorID = match.params.doctorID;
 
   async function getServerDoctorAppointment() {
-    const response = await axios.get("/api/booking/" + doctorID);
-    console.log(response);
-    response.data.appointment.map((cardData) => {
-      setData((prev) => {
-        prev[cardData.day].push(cardData);
-        return [...prev];
+    try {
+      const response = await axios.get("/api/booking/" + doctorID);
+      console.log(response);
+      response.data.appointment.map((cardData) => {
+        setData((prev) => {
+          prev[cardData.day].push(cardData);
+          return [...prev];
+        });
       });
-    });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const theme = useTheme();
@@ -100,21 +104,17 @@ function Booking() {
     return result;
   }
 
-  function handleClickProceed(){
+  function handleClickProceed() {
     const response = postServerAppointment();
   }
 
   async function postServerAppointment() {
     try {
-      const response = axios.patch(
-        "/api/booking/" + doctorID,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = axios.patch("/api/booking/" + doctorID, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return response;
     } catch (error) {
       console.log(error);
