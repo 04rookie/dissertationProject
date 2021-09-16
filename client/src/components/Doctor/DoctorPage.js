@@ -6,10 +6,12 @@ import DoctorPageHeader from "./DoctorPageHeader";
 import DoctorInfo from "./DoctorInfo";
 import { Link, Route, Switch } from "react-router-dom";
 import EditSlot from "./EditSlot";
+import { Stack } from "@material-ui/core";
+import AppointmentCardDoctorPage from "./AppointmentCardDoctorPage";
 function DoctorPage() {
   const location = useLocation();
   const [doctorName, setDoctorName] = useState();
-
+  const [appointment, setAppointment] = useState([]);
   function getParamDoctorID() {
     const match = matchPath(location.pathname, {
       path: "/doctor/:doctorID",
@@ -33,6 +35,7 @@ function DoctorPage() {
       const response = await axios.get("/api/doctor/" + doctorID);
       console.log(response);
       setDoctorName(response.data.doctorName);
+      setAppointment(response.data.appointment)
     } catch (error) {
       console.log(error);
     }
@@ -45,6 +48,10 @@ function DoctorPage() {
         defaultAvatar={defaultAvatar}
       />
       <DoctorInfo />
+      <Stack>
+        {appointment.map((subs)=>{return <AppointmentCardDoctorPage subs={subs}/>})}
+      </Stack>
+
     </div>
   );
 }
