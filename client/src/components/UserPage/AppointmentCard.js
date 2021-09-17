@@ -7,18 +7,45 @@ import axios from "axios";
 function AppointmentCard(props) {
   let location = useLocation();
   function handleJoinClick() {
-    console.log(props);
-    getRoomFromServer();
+    getRoomFromServer().then((response) =>
+      response.roomID === null
+        ? postRoomToServer(response)
+        : loadRoomComponent(response)
+    );
   }
 
   async function getRoomFromServer() {
     try {
-      const response = await axios.get("/api/room/" + props.appointmentID);
-      return response
+      const response = await axios.get(
+        "/api/doctor/appointment/" + props.subs.appointmentID,
+        {
+          params: { doctorID: props.subs.doctorID },
+        }
+      );
+      return response.data;
     } catch (error) {
       console.log(error);
     }
   }
+
+  async function postRoomToServer(sub) {
+    try {
+      const response = await axios.patch(
+        "/api/doctor/appointment/" + sub.appointmentID,
+        sub,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function loadRoomComponent(response) {}
   return (
     <Card>
       <CardContent>

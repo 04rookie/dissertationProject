@@ -269,7 +269,7 @@ const doctorSchema = new mongoose.Schema({
       status: String,
       userID: String,
       doctorID: String,
-      roomID: String
+      roomID: String,
     },
   ],
 });
@@ -327,7 +327,7 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
       //format(req.body.startTime, "hh:mm")
       foundUser.appointment = [];
       let appointmentObject = foundUser.appointment;
-      foundUser.markModified('appointment');
+      foundUser.markModified("appointment");
       let data = {
         appointmentID: null,
         day: null,
@@ -336,7 +336,7 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
         status: null,
         userID: null,
         doctorID: null,
-        roomID: null
+        roomID: null,
       };
       let days = req.body;
       for (let outer = 0; outer < days.length; outer++) {
@@ -348,7 +348,7 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
           data.status = days[outer][inner].status;
           data.userID = days[outer][inner].userID;
           data.doctorID = days[outer][inner].doctorID;
-          data.roomID = days[outer][inner].roomID
+          data.roomID = days[outer][inner].roomID;
           appointmentObject.push(data);
           //foundUser.markModified('appointment');
         }
@@ -365,21 +365,19 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
   });
 });
 
-app.get("/api/edit-slot/:doctorID", (req, res)=>{
+app.get("/api/edit-slot/:doctorID", (req, res) => {
   const reqDoctorId = req.params.doctorID;
-  Doctor.findOne({doctorID: reqDoctorId}, (err, foundUser)=>{
-    if(err){
+  Doctor.findOne({ doctorID: reqDoctorId }, (err, foundUser) => {
+    if (err) {
       console.log(err);
       console.log("365");
-    }
-    else if(foundUser){
-      res.send(foundUser.appointment)
-    }
-    else{
+    } else if (foundUser) {
+      res.send(foundUser.appointment);
+    } else {
       console.log("371 error");
     }
-  })
-})
+  });
+});
 
 app.get("/api/doctor", (req, res) => {
   const skipValue = parseInt(req.query.skipValue);
@@ -459,4 +457,51 @@ app.patch("/api/booking/:doctorID", (req, res) => {
       console.log("User not found inside /booking/:doctorID");
     }
   });
+});
+
+app.get("/api/doctor/appointment/:appointmentID", (req, res) => {
+  const appointmentIDRequest = req.params.appointmentID;
+  const doctorIDRequest = req.query.doctorID;
+  Doctor.findOne(
+    {
+      doctorID: doctorIDRequest,
+      "appointment.appointmentID": appointmentIDRequest,
+    },
+    (err, foundUser) => {
+      if (err) {
+        console.log(err);
+      } else if (foundUser) {
+        let subs = foundUser.appointment.filter(
+          (subs) => subs.appointmentID === appointmentIDRequest
+        );
+        subs = subs[0];
+        res.send(subs);
+      } else {
+        console.log("not found in room/appointment id");
+      }
+    }
+  );
+});
+
+app.patch("/api/doctor/appointment/:appointmentID", (req, res) => {
+  const appointmentIDRequest = req.params.appointmentID;
+  const doctorIDRequest = req.body.doctorID;
+  console.log("hello?");
+  const roomID = makeid(20);
+  //const result = Doctor.findOneAndUpdate({doctorID: doctorIDRequest, 'appointment.appointmentID':appointmentIDRequest}, {$set:{'appointment.$.roomID':roomID}},{overwrite:true, useFindAndModify:true, new:true})
+  // console.log(result);
+  Doctor.findOne({doctorID: doctorIDRequest, 'appointment.appointmentID':appointmentIDRequest}, (err, foundUser)=>{
+    if (err) {
+      console.log(err);
+    }
+    else if(foundUser){
+      foundUser.appointment.forEach((sub)=>sub.appointmentID===appointmentIDRequest?sub.roomID=roomID:{});
+      foundUser.markModified("appointment");
+      foundUser.save();
+      res.send(roomID)
+    }
+    else{
+      console.log("error in /api/doctor/appointment/:appointmentID");
+    }
+  })
 });
