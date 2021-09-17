@@ -148,6 +148,7 @@ function EditSlot(props) {
         day: value,
         status: "open",
         userID: null,
+        roomID: null
       });
       return temp;
     });
@@ -211,6 +212,7 @@ function EditSlot(props) {
             day: data.days[outer][inner].day,
             status: data.days[outer][inner].status,
             userID: data.days[outer][inner].userID,
+            roomID: data.days[outer][inner].roomID
           });
         }
       }

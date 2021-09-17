@@ -14,6 +14,7 @@ function AppointmentCard(props) {
             dayData[i].appointmentID = makeid(20);
             dayData[i].userID = userId;
             dayData[i].status = "reserved";
+            dayData[i].roomID = null
           }
         }
         return [...prev];
@@ -26,6 +27,7 @@ function AppointmentCard(props) {
             dayData[i].appointmentID = null;
             dayData[i].userID = null;
             dayData[i].status = "open";
+            dayData[i].roomID = null
           }
         }
         return [...prev];

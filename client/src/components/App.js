@@ -11,7 +11,7 @@ import DoctorPage from "./Doctor/DoctorPage";
 import EditSlot from "./Doctor/EditSlot";
 import Booking from "./Booking/Booking";
 import CurrentUserId from "./Context/CurrentUserId";
-import Lobby from "./VideoChatRoom/Lobby";
+import Room from "./VideoChatRoom/Room";
 //handles the Route requests of the page.
 function App() {
   const [loginContext, setLoginContext] = React.useState(null);
@@ -67,7 +67,7 @@ function App() {
             path="/booking/:doctorID"
             render={(props) => <Booking />}
           />
-          <Route exact path="/Lobby" render={(props) => <Lobby />} />
+          <Route exact path="/room" render={(props) => <Room />} />
         </Switch>
       </CurrentUserId.Provider>
     </>

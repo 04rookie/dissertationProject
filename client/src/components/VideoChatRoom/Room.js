@@ -2,7 +2,7 @@ import React from "react";
 import { Stack, Box, Grid } from "@material-ui/core";
 import Button from "@mui/material/Button"
 import ButtonGroup from '@mui/material/ButtonGroup';
-function Lobby() {
+function Room() {
   return (
     <Box>
       <Stack spacing={3}>
@@ -22,4 +22,4 @@ function Lobby() {
   );
 }
 
-export default Lobby;
+export default Room;

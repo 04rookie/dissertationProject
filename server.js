@@ -202,56 +202,56 @@ function makeid(length) {
 }
 
 //creates room in metered
-async function postCreateRoom() {
-  try {
-    let dynamicRoomName = makeid(20);
-    const data = { roomName: dynamicRoomName };
-    console.log("inside postCreateRoom Server.js beforePOST");
-    const response = await axios.post(
-      "https://instahelp.metered.live/api/v1/room?secretKey=" +
-        process.env.METERED_SECRET_KEY,
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log(response);
-    console.log(dynamicRoomName + "sv 88");
-    return dynamicRoomName;
-  } catch (error) {
-    console.log(error);
-  }
-}
+// async function postCreateRoom() {
+//   try {
+//     let dynamicRoomName = makeid(20);
+//     const data = { roomName: dynamicRoomName };
+//     console.log("inside postCreateRoom Server.js beforePOST");
+//     const response = await axios.post(
+//       "https://instahelp.metered.live/api/v1/room?secretKey=" +
+//         process.env.METERED_SECRET_KEY,
+//       data,
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     console.log(response);
+//     console.log(dynamicRoomName + "sv 88");
+//     return dynamicRoomName;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 //handles create room call to the api from front end
-app.post("/CreateRoom", (req, res) => {
-  console.log("inside server.js /CreateRoom");
-  let dynamicRoomName = postCreateRoom().then((dynamicRoomName) => {
-    console.log(dynamicRoomName + "sv 99");
-    res.send(dynamicRoomName);
-  });
-});
+// app.post("/CreateRoom", (req, res) => {
+//   console.log("inside server.js /CreateRoom");
+//   let dynamicRoomName = postCreateRoom().then((dynamicRoomName) => {
+//     console.log(dynamicRoomName + "sv 99");
+//     res.send(dynamicRoomName);
+//   });
+// });
 
 //room schema
-const roomNameSchema = new mongoose.Schema({
-  roomName: String,
-});
+// const roomNameSchema = new mongoose.Schema({
+//   roomName: String,
+// });
 
-const RoomName = mongoose.model("RoomName", roomNameSchema);
+// const RoomName = mongoose.model("RoomName", roomNameSchema);
 
-app.post("/PushRoomName", (req, res) => {
-  const roomName = new RoomName({ roomName: req.body.roomName });
-  roomName.save((err) => {
-    if (err) {
-      console.log(err);
-      res.send({ pushStatus: true });
-    } else {
-      res.send({ pushStatus: false });
-    }
-  });
-});
+// app.post("/PushRoomName", (req, res) => {
+//   const roomName = new RoomName({ roomName: req.body.roomName });
+//   roomName.save((err) => {
+//     if (err) {
+//       console.log(err);
+//       res.send({ pushStatus: true });
+//     } else {
+//       res.send({ pushStatus: false });
+//     }
+//   });
+// });
 
 //doctor schema
 const doctorSchema = new mongoose.Schema({
@@ -269,6 +269,7 @@ const doctorSchema = new mongoose.Schema({
       status: String,
       userID: String,
       doctorID: String,
+      roomID: String
     },
   ],
 });
@@ -335,6 +336,7 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
         status: null,
         userID: null,
         doctorID: null,
+        roomID: null
       };
       let days = req.body;
       for (let outer = 0; outer < days.length; outer++) {
@@ -346,6 +348,7 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
           data.status = days[outer][inner].status;
           data.userID = days[outer][inner].userID;
           data.doctorID = days[outer][inner].doctorID;
+          data.roomID = days[outer][inner].roomID
           appointmentObject.push(data);
           //foundUser.markModified('appointment');
         }
