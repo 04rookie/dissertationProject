@@ -2,14 +2,18 @@ import { Button, Card, CardActions, CardContent } from "@material-ui/core";
 import React from "react";
 import { Typography } from "@material-ui/core";
 import format from "date-fns/format";
-import { matchPath, useLocation } from "react-router";
+import { matchPath, useHistory, useLocation } from "react-router";
 import axios from "axios";
 function AppointmentCard(props) {
   let location = useLocation();
+  let history = useHistory();
   function handleJoinClick() {
     getRoomFromServer().then((response) =>
       response.roomID === null
-        ? postRoomToServer(response)
+        ? postRoomToServer(response).then((responseFromPostRoomToServer) => {
+            response.roomID = responseFromPostRoomToServer.data;
+            loadRoomComponent(response);
+          })
         : loadRoomComponent(response)
     );
   }
@@ -39,13 +43,26 @@ function AppointmentCard(props) {
           },
         }
       );
-      console.log(response);
+      return response;
     } catch (error) {
       console.log(error);
     }
   }
 
-  function loadRoomComponent(response) {}
+  function loadRoomComponent(response) {
+    console.log(response);
+    history.push({
+      pathname:
+        "/doctor/" +
+        response.doctorID +
+        "/appointment/" +
+        response.appointmentID +
+        "/room/" +
+        response.roomID,
+      state: { data: response },
+    });
+  }
+
   return (
     <Card>
       <CardContent>

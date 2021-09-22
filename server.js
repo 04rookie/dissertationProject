@@ -112,7 +112,6 @@ app.post("/api/login/doctor", (req, res) => {
 
 //handling the post request to register user
 app.post("/api/register", (req, res) => {
-  console.log(req.body);
   const id = makeid(20);
   const now = new Date();
   const userJoinDate = date.format(now, "YYYY/MM/DD HH:mm:ss");
@@ -162,7 +161,6 @@ app.get("/api/user/:userID", (req, res) => {
         );
         doctorAppointments.push(appointmentObject[0]);
       });
-      console.log(doctorAppointments);
       let resObject = {
         userID: foundUser.userID,
         userFirstName: foundUser.userFirstName,
@@ -202,44 +200,66 @@ function makeid(length) {
 }
 
 //creates room in metered
-// async function postCreateRoom() {
-//   try {
-//     let dynamicRoomName = makeid(20);
-//     const data = { roomName: dynamicRoomName };
-//     console.log("inside postCreateRoom Server.js beforePOST");
-//     const response = await axios.post(
-//       "https://instahelp.metered.live/api/v1/room?secretKey=" +
-//         process.env.METERED_SECRET_KEY,
-//       data,
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     console.log(response);
-//     console.log(dynamicRoomName + "sv 88");
-//     return dynamicRoomName;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
+async function postRoom(roomInfo) {
+  try {
+    const data = { roomName: roomInfo.roomID };
+    const response = await axios.post(
+      "https://instahelp.metered.live/api/v1/room?secretKey=" +
+        process.env.METERED_SECRET_KEY,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const newRoom = new Room({
+      roomName: roomInfo.roomID
+    })
+    newRoom.save((err)=>{
+      if(err){
+        console.log("error inside newRoom.save");
+      }
+      else{
+        console.log("room inserted");
+      }
+    })
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 //handles create room call to the api from front end
-// app.post("/CreateRoom", (req, res) => {
-//   console.log("inside server.js /CreateRoom");
-//   let dynamicRoomName = postCreateRoom().then((dynamicRoomName) => {
-//     console.log(dynamicRoomName + "sv 99");
-//     res.send(dynamicRoomName);
-//   });
-// });
+app.post("/api/metered/room/:roomID", (req, res) => {
+  findRoom(req.params.roomID).then((success) =>
+    success === true
+      ? res.send("roomExists")
+      : postRoom(req.body).then((booleanValue) => res.send("roomCreated"))
+  );
+});
 
-//room schema
-// const roomNameSchema = new mongoose.Schema({
-//   roomName: String,
-// });
+async function findRoom(roomID) {
+  Room.findOne({ roomName: roomID }, (err, foundUser) => {
+    console.log(foundUser);
+    if (err) {
+      console.log(err);
+    } else if (foundUser) {
+      return true;
+    } else if (!foundUser) {
+      return false;
+    } else {
+      console.log("error inside findroom");
+      return null;
+    }
+  });
+}
+// room schema
+const roomSchema = new mongoose.Schema({
+  roomName: String,
+});
 
-// const RoomName = mongoose.model("RoomName", roomNameSchema);
+const Room = mongoose.model("Room", roomSchema);
 
 // app.post("/PushRoomName", (req, res) => {
 //   const roomName = new RoomName({ roomName: req.body.roomName });
@@ -353,7 +373,6 @@ app.post("/api/edit-slot/:doctorID", (req, res) => {
           //foundUser.markModified('appointment');
         }
       }
-      console.log(appointmentObject);
       //foundUser.markModified('appointment');
       foundUser.save();
       res.send(true);
@@ -486,22 +505,29 @@ app.get("/api/doctor/appointment/:appointmentID", (req, res) => {
 app.patch("/api/doctor/appointment/:appointmentID", (req, res) => {
   const appointmentIDRequest = req.params.appointmentID;
   const doctorIDRequest = req.body.doctorID;
-  console.log("hello?");
   const roomID = makeid(20);
   //const result = Doctor.findOneAndUpdate({doctorID: doctorIDRequest, 'appointment.appointmentID':appointmentIDRequest}, {$set:{'appointment.$.roomID':roomID}},{overwrite:true, useFindAndModify:true, new:true})
   // console.log(result);
-  Doctor.findOne({doctorID: doctorIDRequest, 'appointment.appointmentID':appointmentIDRequest}, (err, foundUser)=>{
-    if (err) {
-      console.log(err);
+  Doctor.findOne(
+    {
+      doctorID: doctorIDRequest,
+      "appointment.appointmentID": appointmentIDRequest,
+    },
+    (err, foundUser) => {
+      if (err) {
+        console.log(err);
+      } else if (foundUser) {
+        foundUser.appointment.forEach((sub) =>
+          sub.appointmentID === appointmentIDRequest
+            ? (sub.roomID = roomID)
+            : {}
+        );
+        foundUser.markModified("appointment");
+        foundUser.save();
+        res.send(roomID);
+      } else {
+        console.log("error in /api/doctor/appointment/:appointmentID");
+      }
     }
-    else if(foundUser){
-      foundUser.appointment.forEach((sub)=>sub.appointmentID===appointmentIDRequest?sub.roomID=roomID:{});
-      foundUser.markModified("appointment");
-      foundUser.save();
-      res.send(roomID)
-    }
-    else{
-      console.log("error in /api/doctor/appointment/:appointmentID");
-    }
-  })
+  );
 });

@@ -68,6 +68,11 @@ function App() {
             render={(props) => <Booking />}
           />
           <Route exact path="/room" render={(props) => <Room />} />
+          <Route
+            exact
+            path="/doctor/:doctorID/appointment/:appointmentID/room/:roomID"
+            render={(props) => <Room {...props} />}
+          />
         </Switch>
       </CurrentUserId.Provider>
     </>
