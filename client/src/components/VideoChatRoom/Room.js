@@ -11,9 +11,10 @@ function Room(props) {
     meeting = new window.Metered.Meeting();
     postRoom().then((success) => {
       console.log(success);
-      showMe();
-      showThem();
-      joinMeeting();
+      joinMeeting().then(()=>{
+        showMe();
+        showThem();
+      });
     });
   }, []);
 
