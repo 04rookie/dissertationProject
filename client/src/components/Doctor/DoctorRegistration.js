@@ -6,6 +6,7 @@ function DoctorRegistration() {
     doctorLastName: "",
     doctorEmail: "",
     doctorPassword: "",
+    doctorRate: ""
   });
 
   function handleChange(event) {
@@ -64,6 +65,13 @@ function DoctorRegistration() {
           name="doctorEmail"
           onChange={handleChange}
           value={doctor.doctorEmail}
+        />
+        rate
+        <input
+          type="text"
+          name="doctorRate"
+          onChange={handleChange}
+          value={doctor.doctorRate}
         />
         <input type="submit" name="submit" onClick={handleSubmit} />
       </form>{" "}

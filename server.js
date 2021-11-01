@@ -15,7 +15,7 @@ const { format } = require("date-fns");
 
 //Connecting to mongo db on atlas.
 mongoose.connect(
-  "***REMOVED***",
+  process.env.MONGO_DB_URL_KEY,
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
@@ -279,6 +279,7 @@ const doctorSchema = new mongoose.Schema({
   doctorLastName: String,
   doctorPassword: String,
   doctorEmail: String,
+  doctor: Number,
   appointment: [
     {
       appointmentID: String,
@@ -304,6 +305,7 @@ app.post("/api/register-doctor", (req, res) => {
     doctorLastName: req.body.doctorLastName,
     doctorPassword: req.body.doctorPassword,
     doctorEmail: req.body.doctorEmail,
+    doctorRate: req.body.doctorRate,
   });
   newDoctor.save((err) => {
     if (err) {
