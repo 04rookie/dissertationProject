@@ -11,7 +11,22 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import { Stack, Box } from "@mui/material";
 import AppointmentCard from "./AppointmentCard";
-import { Button } from "@material-ui/core";
+//import { Button } from "@material-ui/core";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import Slider from "@mui/material/Slider";
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -51,6 +66,8 @@ function Booking() {
     getServerDoctorAppointment();
   }, []);
 
+  const [doctorRate, setDoctorRate] = useState(0);
+
   const match = matchPath(location.pathname, {
     path: "/booking/:doctorID",
     exact: true,
@@ -62,6 +79,7 @@ function Booking() {
     try {
       const response = await axios.get("/api/booking/" + doctorID);
       console.log(response);
+      setDoctorRate(response.data.doctorRate);
       response.data.appointment.map((cardData) => {
         setData((prev) => {
           prev[cardData.day].push(cardData);
@@ -105,8 +123,14 @@ function Booking() {
   }
 
   function handleClickProceed() {
+    handleClickOpen();
+    success === "Booked billing successful"
+      ? postServerAppointment()
+      : console.log("not booked billing unsuccessful");
     const response = postServerAppointment();
   }
+
+  function handleBilling() {}
 
   async function postServerAppointment() {
     try {
@@ -121,8 +145,114 @@ function Booking() {
     }
   }
 
+  const [open, setOpen] = React.useState(false);
+  const [success, setSuccess] = useState("");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+    setSuccess("not booked billing unsuccessful");
+  };
+
+  const handlePay = () => {
+    setOpen(false);
+    setSuccess("Booked billing successful");
+  };
+
+  const [cardType, setCardType] = React.useState("Credit Card");
+
+  const handleCardSelect = (event) => {
+    setCardType(event.target.value);
+  };
+
+  const [sessionCount, setSessionCount] = useState(1)
+
+  function handleSessionCountSlider(event){
+    setSessionCount(event.target.value)
+  }
+
   return (
     <Stack spacing={3}>
+      <Dialog open={open} onClose={handleCancel}>
+        <DialogTitle>Billing</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <b>
+              To subscribe to this website, please enter your billing
+              information here. We will send updates occasionally.
+            </b>
+          </DialogContentText>
+          <div>Doctor rate per session: {doctorRate}</div>
+          <div>Number of sessions: {sessionCount}</div>
+          <Box width={300}>
+            <Slider
+              size="small"
+              aria-label="Small"
+              valueLabelDisplay="auto"
+              min={1}
+              max={25}
+              value={sessionCount}
+              onChange={handleSessionCountSlider}
+              name="sessionSlider"
+            />
+          </Box>
+          <div>Amount: {sessionCount*doctorRate}</div>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Select card type</FormLabel>
+            <RadioGroup
+              aria-label="Select card type"
+              name="controlled-radio-buttons-group"
+              value={cardType}
+              onChange={handleCardSelect}
+            >
+              <FormControlLabel
+                value="Credit card"
+                control={<Radio />}
+                label="Credit card"
+              />
+              <FormControlLabel
+                value="Debit card"
+                control={<Radio />}
+                label="Debit card"
+              />
+            </RadioGroup>
+          </FormControl>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Card number"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="CVV"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="year"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handlePay}>Pay</Button>
+        </DialogActions>
+      </Dialog>
       <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
         <AppBar position="static">
           <Tabs

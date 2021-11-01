@@ -54,7 +54,7 @@ function Market() {
       </form>
       <Stack spacing={3}>
         {marketData.map((cardData) => {
-          return <MarketDoctorCard key={cardData.doctorID} doctorID={cardData.doctorID} doctorName={cardData.doctorName}/>;
+          return <MarketDoctorCard key={cardData.doctorID} doctorID={cardData.doctorID} doctorName={cardData.doctorName} doctorRate={cardData.doctorRate}/>;
         })}
       </Stack>
     </div>

@@ -23,6 +23,7 @@ function MarketDoctorCard(props) {
         <Typography component={"span"} variant="body2">
           {props.doctorID} <br />
           {props.doctorName}
+          {props.doctorRate}
         </Typography>
       </CardContent>
       <CardActions>

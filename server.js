@@ -279,7 +279,7 @@ const doctorSchema = new mongoose.Schema({
   doctorLastName: String,
   doctorPassword: String,
   doctorEmail: String,
-  doctor: Number,
+  doctorRate: Number,
   appointment: [
     {
       appointmentID: String,
@@ -299,6 +299,7 @@ const Doctor = mongoose.model("Doctor", doctorSchema);
 //generates a doctor with a unique id
 app.post("/api/register-doctor", (req, res) => {
   const id = makeid(20);
+  req.body.doctorRate = Number(req.body.doctorRate)
   const newDoctor = new Doctor({
     doctorID: id,
     doctorFirstName: req.body.doctorFirstName,
