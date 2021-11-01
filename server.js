@@ -214,16 +214,15 @@ async function postRoom(roomInfo) {
       }
     );
     const newRoom = new Room({
-      roomName: roomInfo.roomID
-    })
-    newRoom.save((err)=>{
-      if(err){
+      roomName: roomInfo.roomID,
+    });
+    newRoom.save((err) => {
+      if (err) {
         console.log("error inside newRoom.save");
-      }
-      else{
+      } else {
         console.log("room inserted");
       }
-    })
+    });
     return true;
   } catch (error) {
     console.log(error);
@@ -241,7 +240,7 @@ app.post("/api/metered/room/:roomID", (req, res) => {
 
 async function findRoom(roomID) {
   Room.findOne({ roomName: roomID }, (err, foundUser) => {
-    console.log(foundUser);
+    console.log(foundUser + "GOT THE ROOM");
     if (err) {
       console.log(err);
     } else if (foundUser) {
@@ -531,3 +530,21 @@ app.patch("/api/doctor/appointment/:appointmentID", (req, res) => {
     }
   );
 });
+
+app.delete("/api/room/:roomID", (req, res) => {
+  const roomID = req.params.roomID;
+  deleteRoomFromMetered(roomID).then((responseFromMeteredDeleteRoom) =>
+    res.send(true)
+  );
+});
+
+async function deleteRoomFromMetered(roomID) {
+  const responseFromMeteredDeleteRoom = await axios.delete(
+    "https://instahelp.metered.live/api/v1/room/" + roomID + "?secretKey=" +
+    process.env.METERED_SECRET_KEY,
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  return responseFromMeteredDeleteRoom;
+}

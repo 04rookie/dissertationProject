@@ -10,8 +10,8 @@ function Room(props) {
   useEffect(() => {
     meeting = new window.Metered.Meeting();
     postRoom().then((success) => {
-      console.log(success);
-      joinMeeting().then(()=>{
+      console.log(success + "logging success");
+      joinMeeting().then(() => {
         showMe();
         showThem();
       });
@@ -97,6 +97,7 @@ function Room(props) {
       $("#userTwoVideo").append(videoTag);
     });
   }
+
   function handleVideo() {
     try {
       meeting.startVideo();
@@ -112,6 +113,19 @@ function Room(props) {
       console.log("Error occurred whern sharing microphone", ex);
     }
   }
+
+  function handleDisconnect() {
+    deleteRoom().then((response)=>console.log("inside handle disconnect"));
+  }
+
+  async function deleteRoom() {
+    const response = await axios.delete("/api/room/" + roomInfo.roomID, {
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log(response + "inside delete room room.js")
+    return response
+  }
+
   return (
     <Box>
       <Stack spacing={3}>
@@ -136,7 +150,7 @@ function Room(props) {
             aria-label="outlined primary button group"
           >
             <Button onClick={handleMute}>Mute</Button>
-            <Button>Disconnect</Button>
+            <Button onClick={handleDisconnect}>Disconnect</Button>
             <Button onClick={handleVideo}>Video</Button>
             <Button>Their Video</Button>
             <Button>Unmute</Button>
