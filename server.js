@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   userEmail: String,
   userPassword: String,
   userJoinDate: String,
-  userSubscription: [{ doctorID: String, appointmentID: String }],
+  userSubscription: [{ doctorID: String, appointmentID: String, sessionCount: Number}],
 });
 
 //Creating model based on schema
@@ -436,13 +436,16 @@ app.get("/api/booking/:doctorID", (req, res) => {
 app.patch("/api/booking/:doctorID", (req, res) => {
   const doctorIDRequest = req.params.doctorID;
   let data = [];
-  req.body.map((days) => {
+  const sessionCount = req.body[0]
+  //console.log(sessionCount + " SESSION COUNT!!");
+  req.body[1].map((days) => {
     days.map((record) => {
       if (record.status === "reserved") {
         data.push(record);
       }
     });
   });
+  //console.log(req.body[1])
   data.map((record) => {
     User.findOne({ userID: record.userID }, (err, foundUser) => {
       if (err || !foundUser) {
@@ -451,6 +454,7 @@ app.patch("/api/booking/:doctorID", (req, res) => {
         foundUser.userSubscription.push({
           doctorID: doctorIDRequest,
           appointmentID: record.appointmentID,
+          sessionCount: sessionCount
         });
         foundUser.save();
       }

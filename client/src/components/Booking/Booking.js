@@ -123,18 +123,14 @@ function Booking() {
   }
 
   function handleClickProceed() {
-    handleClickOpen();
-    success === "Booked billing successful"
-      ? postServerAppointment()
-      : console.log("not booked billing unsuccessful");
-    const response = postServerAppointment();
+    setOpen(true);
   }
 
   function handleBilling() {}
 
   async function postServerAppointment() {
     try {
-      const response = axios.patch("/api/booking/" + doctorID, data, {
+      const response = axios.patch("/api/booking/" + doctorID, [sessionCount, data], {
         headers: {
           "Content-Type": "application/json",
         },
@@ -148,10 +144,6 @@ function Booking() {
   const [open, setOpen] = React.useState(false);
   const [success, setSuccess] = useState("");
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
   const handleCancel = () => {
     setOpen(false);
     setSuccess("not booked billing unsuccessful");
@@ -160,6 +152,10 @@ function Booking() {
   const handlePay = () => {
     setOpen(false);
     setSuccess("Booked billing successful");
+    success === "Booked billing successful"
+      ? postServerAppointment()
+      : console.log("not booked billing unsuccessful");
+    const response = postServerAppointment();
   };
 
   const [cardType, setCardType] = React.useState("Credit Card");
@@ -168,10 +164,10 @@ function Booking() {
     setCardType(event.target.value);
   };
 
-  const [sessionCount, setSessionCount] = useState(1)
+  const [sessionCount, setSessionCount] = useState(1);
 
-  function handleSessionCountSlider(event){
-    setSessionCount(event.target.value)
+  function handleSessionCountSlider(event) {
+    setSessionCount(event.target.value);
   }
 
   return (
@@ -199,7 +195,7 @@ function Booking() {
               name="sessionSlider"
             />
           </Box>
-          <div>Amount: {sessionCount*doctorRate}</div>
+          <div>Amount: {sessionCount * doctorRate}</div>
           <FormControl component="fieldset">
             <FormLabel component="legend">Select card type</FormLabel>
             <RadioGroup
@@ -228,6 +224,7 @@ function Booking() {
             type="text"
             fullWidth
             variant="standard"
+            name="cardNumber"
           />
           <TextField
             autoFocus
@@ -237,6 +234,7 @@ function Booking() {
             type="text"
             fullWidth
             variant="standard"
+            name="cvv"
           />
           <TextField
             autoFocus
@@ -246,6 +244,7 @@ function Booking() {
             type="text"
             fullWidth
             variant="standard"
+            name="year"
           />
         </DialogContent>
         <DialogActions>
