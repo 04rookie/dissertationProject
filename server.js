@@ -14,10 +14,10 @@ const date = require("date-and-time");
 const { format } = require("date-fns");
 
 //Connecting to mongo db on atlas.
-mongoose.connect(
-  process.env.MONGO_DB_URL_KEY,
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect(process.env.MONGO_DB_URL_KEY, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 //Defining user Schema
 const userSchema = new mongoose.Schema({
@@ -27,7 +27,9 @@ const userSchema = new mongoose.Schema({
   userEmail: String,
   userPassword: String,
   userJoinDate: String,
-  userSubscription: [{ doctorID: String, appointmentID: String, sessionCount: Number}],
+  userSubscription: [
+    { doctorID: String, appointmentID: String, sessionCount: Number },
+  ],
 });
 
 //Creating model based on schema
@@ -169,6 +171,7 @@ app.get("/api/user/:userID", (req, res) => {
         loginStatus: true,
         userJoinDate: foundUser.userJoinDate,
         userSubscription: doctorAppointments,
+        sessionCount: foundUser.userSubscription,
       };
       res.send(resObject);
       console.log("user fetched");
@@ -299,7 +302,7 @@ const Doctor = mongoose.model("Doctor", doctorSchema);
 //generates a doctor with a unique id
 app.post("/api/register-doctor", (req, res) => {
   const id = makeid(20);
-  req.body.doctorRate = Number(req.body.doctorRate)
+  req.body.doctorRate = Number(req.body.doctorRate);
   const newDoctor = new Doctor({
     doctorID: id,
     doctorFirstName: req.body.doctorFirstName,
@@ -436,7 +439,7 @@ app.get("/api/booking/:doctorID", (req, res) => {
 app.patch("/api/booking/:doctorID", (req, res) => {
   const doctorIDRequest = req.params.doctorID;
   let data = [];
-  const sessionCount = req.body[0]
+  const sessionCount = req.body[0];
   //console.log(sessionCount + " SESSION COUNT!!");
   req.body[1].map((days) => {
     days.map((record) => {
@@ -454,7 +457,7 @@ app.patch("/api/booking/:doctorID", (req, res) => {
         foundUser.userSubscription.push({
           doctorID: doctorIDRequest,
           appointmentID: record.appointmentID,
-          sessionCount: sessionCount
+          sessionCount: sessionCount,
         });
         foundUser.save();
       }
@@ -547,11 +550,73 @@ app.delete("/api/room/:roomID", (req, res) => {
 
 async function deleteRoomFromMetered(roomID) {
   const responseFromMeteredDeleteRoom = await axios.delete(
-    "https://instahelp.metered.live/api/v1/room/" + roomID + "?secretKey=" +
-    process.env.METERED_SECRET_KEY,
+    "https://instahelp.metered.live/api/v1/room/" +
+      roomID +
+      "?secretKey=" +
+      process.env.METERED_SECRET_KEY,
     {
       headers: { "Content-Type": "application/json" },
     }
   );
   return responseFromMeteredDeleteRoom;
 }
+
+app.patch("/api/user/:userID/user-subscription/session-count", (req, res) => {
+  try {
+    const userIDRequest = req.params.userID;
+    console.log(req.body);
+    console.log("logging body");
+    const doctorIDRequest = req.body.doctorID;
+    User.findOne({ userID: userIDRequest }, (err, foundUser) => {
+      if (err) {
+        console.log("error in user/session/count patch");
+      } else if (foundUser) {
+        console.log("inside else");
+        foundUser.userSubscription.forEach((element) => {
+          console.log(element.doctorID);
+          console.log("-");
+          console.log(doctorIDRequest);
+          if (element.doctorID === doctorIDRequest) {
+            element.sessionCount = element.sessionCount - 1;
+            console.log(element.sessionCount);
+          }
+        });
+      }
+      console.log(foundUser.userSubscription);
+      foundUser.markModified("userSubscription");
+      foundUser.save();
+    });
+    res.send(true);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.delete(
+  "/api/user/:userID/user-subscription/doctor/:doctorID",
+  (req, res) => {
+    const userIDRequest = req.params.userID;
+    const doctorIDRequest = req.params.doctorID;
+    User.findOne({ userID: userIDRequest }, (err, foundUser) => {
+      if (err) {
+        console.log("error inside delete route, user subs");
+      } else if (foundUser) {
+        foundUser.userSubscription = foundUser.userSubscription.filter(
+          (element) => element.doctorID !== doctorIDRequest
+        );
+      }
+      foundUser.markModified("userSubscription");
+      foundUser.save();
+    });
+    Doctor.findOne({doctorID: doctorIDRequest}, (err, foundDoc)=>{
+      if(err){
+        console.log("error inside delete route, user subs")
+      }
+      else if(foundDoc){
+        foundDoc.appointment = foundDoc.appointment.filter((element)=>element.userID !== userIDRequest)
+      }
+      foundDoc.markModified("appointment");
+      foundDoc.save();
+    })
+  }
+);

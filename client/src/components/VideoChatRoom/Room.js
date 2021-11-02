@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Stack, Box, Grid } from "@material-ui/core";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import $ from "jquery";
 import axios from "axios";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import CurrentUserId from "../Context/CurrentUserId";
 function Room(props) {
   let meeting, meetingInfo;
+  const userID = useContext(CurrentUserId);
   const [roomInfo, setRoomInfo] = useState(props.location.state.data);
   useEffect(() => {
     meeting = new window.Metered.Meeting();
@@ -114,21 +122,100 @@ function Room(props) {
     }
   }
 
+  const [open, setOpen] = React.useState(false);
+  const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+
   function handleDisconnect() {
-    deleteRoom().then((response)=>console.log("inside handle disconnect"));
+    setOpen(true);
   }
+
+  const handleActionTrue = () => {
+    setOpen(false);
+    console.log(userID + " userid");
+    console.log(roomInfo.userID);
+    deleteRoom().then((response) => {
+      if (typeof userID === "undefined") {
+        handleSessionCloseForDoctor();
+      } else {
+        console.log("user" + userID);
+        deleteRoom();
+      }
+    });
+  };
+
+  async function handleSessionCloseForDoctor() {
+    await axios.get("/api/user/" + roomInfo.userID).then(async (response) => {
+      console.log("loggin response");
+      console.log(response);
+      console.log(response.data.sessionCount + " response session count");
+      let sessionCount = response.data.sessionCount.filter(
+        (element) => element.doctorID === roomInfo.doctorID
+      );
+      let test = sessionCount[0].sessionCount;
+      console.log(test + " test");
+      if (test > 0) {
+        await axios.patch(
+          "/api/user/" + roomInfo.userID + "/user-subscription/session-count",
+          { doctorID: roomInfo.doctorID },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        await axios.delete(
+          "/api/user/" +
+            roomInfo.userID +
+            "/user-subscription/doctor/" +
+            roomInfo.doctorID,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    });
+  }
+
+  const handleActionFalse = () => {
+    setOpen(false);
+  };
 
   async function deleteRoom() {
     const response = await axios.delete("/api/room/" + roomInfo.roomID, {
       headers: { "Content-Type": "application/json" },
     });
-    console.log(response + "inside delete room room.js")
-    return response
+    console.log(response + "inside delete room room.js");
+    return response;
   }
 
   return (
     <Box>
       <Stack spacing={3}>
+        <div>
+          <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleActionFalse}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>
+              {"Do you consider this as a successful session?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                Agreeing to this will result in
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleActionFalse}>Disagree</Button>
+              <Button onClick={handleActionTrue}>Agree</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
         <Grid>
           <Grid item xs={6}>
             {roomInfo.roomID}
