@@ -11,11 +11,23 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import CurrentUserId from "../Context/CurrentUserId";
+import TextField from "@mui/material/TextField";
+import { useHistory } from "react-router-dom";
+import Rating from "@mui/material/Rating";
+
 function Room(props) {
   let meeting, meetingInfo;
+  let history = useHistory();
   const userID = useContext(CurrentUserId);
+  const [userType, setUserType] = useState();
+
   const [roomInfo, setRoomInfo] = useState(props.location.state.data);
   useEffect(() => {
+    if (typeof userID === "undefined") {
+      setUserType("doctor");
+    } else {
+      setUserType("patient");
+    }
     meeting = new window.Metered.Meeting();
     postRoom().then((success) => {
       console.log(success + "logging success");
@@ -137,13 +149,32 @@ function Room(props) {
     console.log(roomInfo.userID);
     deleteRoom().then((response) => {
       if (typeof userID === "undefined") {
-        handleSessionCloseForDoctor();
+        handleSessionCloseForDoctor()
+          .then(() => closeMeeting())
+          .then(() => {
+            const loadUserPage = () =>
+              history.push({
+                pathname: "/doctor/" + roomInfo.doctorID,
+              });
+            loadUserPage();
+          });
       } else {
         console.log("user" + userID);
-        deleteRoom();
+        handleSessionCloseForPatient();
       }
     });
   };
+
+  async function closeMeeting() {
+    try {
+      await meeting
+        .stopAudio()
+        .then(async () => await meeting.stopVideo())
+        .then(async () => await meeting.leaveMeeting());
+    } catch (err) {
+      console.log("err");
+    }
+  }
 
   async function handleSessionCloseForDoctor() {
     await axios.get("/api/user/" + roomInfo.userID).then(async (response) => {
@@ -177,10 +208,40 @@ function Room(props) {
         );
       }
     });
+    return true;
+  }
+
+  async function handleSessionCloseForPatient() {
+    await axios.get("/api/user/" + roomInfo.userID).then(async (response) => {
+      let sessionCount = response.data.sessionCount.filter(
+        (element) => element.doctorID === roomInfo.doctorID
+      );
+      let test = sessionCount[0].sessionCount;
+      if (test > 0) {
+        closeMeeting().then(() => {
+          const loadUserPage = () =>
+            history.push({
+              pathname: "/user-page/" + roomInfo.userID,
+            });
+          loadUserPage();
+        });
+      } else {
+        setOpenReview(true);
+      }
+    });
   }
 
   const handleActionFalse = () => {
     setOpen(false);
+    if (typeof userID === "undefined") {
+      closeMeeting().then(() => {
+        const loadUserPage = () =>
+          history.push({
+            pathname: "/doctor/" + roomInfo.doctorID,
+          });
+        loadUserPage();
+      });
+    }
   };
 
   async function deleteRoom() {
@@ -188,6 +249,83 @@ function Room(props) {
       headers: { "Content-Type": "application/json" },
     });
     console.log(response + "inside delete room room.js");
+    return response;
+  }
+
+  const docData = {
+    title: "Do you consider this as a successful session?",
+    text: "Agreeing to this will deduct a session from patient's account.",
+  };
+
+  const patientData = {
+    title: "Are you sure you want to leave?",
+    text: "You will be redirected to your home page.",
+  };
+
+  const [openReview, setOpenReview] = React.useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [rating, setRating] = useState(3);
+  const handleReviewChange = (event) => {
+    setReviewText(event.target.value);
+  };
+  const handleReviewTitleChange = (event) => {
+    setReviewTitle(event.target.value);
+  };
+
+  const handleReviewActionFalse = () => {
+    setOpenReview(false);
+    closeMeeting().then(() => {
+      closeMeeting().then(() => {
+        const loadUserPage = () =>
+          history.push({
+            pathname: "/user-page/" + roomInfo.userID,
+          });
+        loadUserPage();
+      });
+    });
+  };
+
+  const handleReviewActionTrue = () => {
+    setOpenReview(false);
+    const date = new Date();
+    const month = new Intl.DateTimeFormat("en-US", { month: "long" }).format(
+      date
+    );
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const dateString = month + ", " + day + ", " + year;
+    const review = {
+      userID: roomInfo.userID,
+      doctorID: roomInfo.doctorID,
+      reviewTitle: reviewTitle,
+      reviewText: reviewText,
+      rating: rating,
+      reviewDate: dateString,
+    };
+    closeMeeting().then(() => {
+      postReviewServer(review).then(() => {
+        const loadUserPage = () =>
+          history.push({
+            pathname: "/user-page/" + roomInfo.userID,
+          });
+        loadUserPage();
+      });
+    });
+  };
+
+  async function postReviewServer(review) {
+    const response = await axios.post(
+      "/api/user/" +
+        roomInfo.userID +
+        "/doctor/" +
+        roomInfo.doctorID +
+        "/review",
+      review,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
     return response;
   }
 
@@ -203,16 +341,63 @@ function Room(props) {
             aria-describedby="alert-dialog-slide-description"
           >
             <DialogTitle>
-              {"Do you consider this as a successful session?"}
+              {userType === "doctor" ? docData.title : patientData.title}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-slide-description">
-                Agreeing to this will result in
+                {userType === "doctor" ? docData.text : patientData.text}
               </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleActionFalse}>Disagree</Button>
               <Button onClick={handleActionTrue}>Agree</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        <div>
+          <Dialog
+            open={openReview}
+            keepMounted
+            onClose={handleReviewActionFalse}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>This was your last session.</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                If you wish to share your experience with others of your
+                journey, please feel free to leave a comment
+              </DialogContentText>
+              <Rating
+                name="userRating"
+                value={rating}
+                onChange={(event, newValue) => {
+                  setRating(newValue);
+                }}
+              />
+              <TextField
+                id="reviewTitle"
+                label="Title"
+                multiline
+                maxRows={2}
+                value={reviewTitle}
+                onChange={handleReviewTitleChange}
+                variant="filled"
+                name="reviewTitle"
+              />
+              <TextField
+                id="reviewText"
+                label="Multiline"
+                multiline
+                maxRows={4}
+                value={reviewText}
+                onChange={handleReviewChange}
+                variant="filled"
+                name="reviewText"
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleReviewActionFalse}>Maybe later</Button>
+              <Button onClick={handleReviewActionTrue}>Submit</Button>
             </DialogActions>
           </Dialog>
         </div>

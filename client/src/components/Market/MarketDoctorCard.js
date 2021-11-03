@@ -17,6 +17,11 @@ function MarketDoctorCard(props) {
       console.log(error);
     }
   }
+  
+  function callHandleClickReviews(){
+    props.handleClickReviews(props.doctorID);
+  }
+
   return (
     <Card>
       <CardContent>
@@ -29,6 +34,9 @@ function MarketDoctorCard(props) {
       <CardActions>
         <Button variant="outlined" onClick={handleClick}>
           Book
+        </Button>
+        <Button variant="outlined" onClick={callHandleClickReviews}>
+          Show Reviews
         </Button>
       </CardActions>
     </Card>

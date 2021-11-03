@@ -205,7 +205,7 @@ function makeid(length) {
 //creates room in metered
 async function postRoom(roomInfo) {
   try {
-    const data = { roomName: roomInfo.roomID };
+    const data = { roomName: roomInfo.roomID, endMeetingAfterNoActivityInSec: 5};
     const response = await axios.post(
       "https://instahelp.metered.live/api/v1/room?secretKey=" +
         process.env.METERED_SECRET_KEY,
@@ -620,3 +620,49 @@ app.delete(
     })
   }
 );
+
+const reviewSchema = new mongoose.Schema({
+  userID: String,
+  doctorID: String,
+  reviewTitle: String,
+  reviewText: String,
+  rating: Number,
+  reviewDate: String
+})
+const Review = mongoose.model("Review", reviewSchema);
+
+app.post("/api/user/:userID/doctor/:doctorID/review", (req, res)=>{
+  const review = new Review({
+    userID: req.body.userID,
+    doctorID: req.body.doctorID,
+    reviewTitle: req.body.reviewTitle,
+    reviewText: req.body.reviewText,
+    rating: req.body.rating,
+    reviewDate: req.body.reviewDate
+  })
+  review.save((err)=>{
+    if(err){
+      console.log("error inside api/review post")
+      res.send(false)
+    }
+    else {
+      res.send(true)
+    }
+  });
+})
+
+app.get("/api/review/:doctorID", (req, res)=>{
+  const doctorIDRequest = req.params.doctorID;
+  Review.find({doctorID: doctorIDRequest}, (err, foundReview)=>{
+    if(err){
+      console.log(err);
+    }
+    else if(foundReview){
+      res.send(foundReview)
+    }
+    else{
+      console.log("No reviews")
+      res.send(false)
+    }
+  })
+})
