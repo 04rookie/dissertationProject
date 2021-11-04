@@ -203,11 +203,9 @@ function Room(props) {
 
   async function closeMeeting() {
     try {
-      const response = await meeting
-        .stopAudio()
-        .then(async () => await meeting.stopVideo())
-        .then(async () => await meeting.leaveMeeting());
-
+      const response = await meeting.stopAudio()
+      await meeting.stopVideo()
+      await meeting.leaveMeeting();
       return response;
     } catch (err) {
       console.log("err");
@@ -450,7 +448,7 @@ function Room(props) {
             direction="row"
             justifyContent="center"
             alignItems="center"
-            style={{display: "flex"}}
+            style={{ display: "flex" }}
           >
             {/* {roomInfo.roomID} */}
             <video className="styleVideo" id="userVideo" autoPlay muted></video>
@@ -462,7 +460,7 @@ function Room(props) {
             direction="row"
             justifyContent="center"
             alignItems="center"
-            style={{display: "flex"}}
+            style={{ display: "flex" }}
           ></Grid>
         </Grid>
         <Box>
