@@ -21,8 +21,8 @@ function Room(props) {
   let history = useHistory();
   const userID = useContext(CurrentUserId);
   const [userType, setUserType] = useState();
-  const [localAudio, setLocalAudio] = useState(true);
-  const [localVideo, setLocalVideo] = useState(true);
+  const [localAudio, setLocalAudio] = useState(false);
+  const [localVideo, setLocalVideo] = useState(false);
   const [roomInfo, setRoomInfo] = useState(props.location.state.data);
   useEffect(() => {
     if (typeof userID === "undefined") {
@@ -30,28 +30,15 @@ function Room(props) {
     } else {
       setUserType("patient");
     }
-    //meeting.setMeeting();
     postRoom().then((success) => {
       console.log(success + "logging success");
       joinMeeting().then(() => {
         console.log("joined");
-        showMe()
-          .then(() => showThem())
-          .then(() => handleStartVideo())
-          .then(() => handleStartAudio())
-          .then(() => handleLocalVideo())
-          .then(() => handleLocalAudio())
-          .then(() => handleOnParticipantJoined())
+        showMe().then(() => showThem());
       });
     });
   }, []);
 
-  async function handleOnParticipantJoined(){
-    meeting.on("participantJoined", function(participantInfo) {
-      console.log("participant has joined the room", participantInfo);
-      handleStartVideo().then(()=>handleStartAudio());
-    });
-  }
   async function postRoom() {
     try {
       console.log(roomInfo.roomID);
@@ -126,42 +113,44 @@ function Room(props) {
       // Setting the class name to participantSessionId so that when this participant
       // leaves we can easily remove all the video tags associated with this
       // participant.
-      videoTag.class = remoteTrackItem.participantSessionId;
-
+      //videoTag.class = remoteTrackItem.participantSessionId;
+      videoTag.class = "styleVideo";
       // Adding the video tag to container where we will display
-      // All the remote streams
+      // // All the remote streams
+      // videoTag.height = 240;
+      // videoTag.width = 320;
       $("#otherUser").append(videoTag);
-      $("#otherUser")[0].height("240")
-      $("#otherUser")[0].width("320")
     });
     return true;
   }
 
-  async function handleStartVideo() {
-    try {
-      const response = await meeting.startVideo();
-      return response;
-    } catch (ex) {
-      console.log("Error occurred whern sharing camera", ex);
-    }
-  }
+  // async function handleStartVideo() {
+  //   try {
+  //     const response = await meeting.startVideo();
+  //     return response;
+  //   } catch (ex) {
+  //     console.log("Error occurred whern sharing camera", ex);
+  //   }
+  // }
 
-  async function handleStartAudio() {
-    try {
-      const response = await meeting.startAudio();
-      return response;
-    } catch (ex) {
-      console.log("Error occurred whern sharing microphone", ex);
-    }
-  }
-
-  
+  // async function handleStartAudio() {
+  //   try {
+  //     const response = await meeting.startAudio();
+  //     return response;
+  //   } catch (ex) {
+  //     console.log("Error occurred whern sharing microphone", ex);
+  //   }
+  // }
 
   async function handleLocalVideo() {
     try {
-
-      localVideo===true?await meeting.pauseLocalVideo():await meeting.resumeLocalVideo();
-      setLocalVideo(!localVideo)
+      console.log("before: " + localVideo);
+      if (localVideo === false) {
+        setLocalVideo(true);
+        await meeting.startVideo();
+        await meeting.resumeLocalVideo();
+      }
+      console.log("after: " + localVideo);
       return true;
     } catch (ex) {
       console.log("Error occurred whern sharing camera", ex);
@@ -170,8 +159,11 @@ function Room(props) {
 
   async function handleLocalAudio() {
     try {
-      localAudio===true?await meeting.unmuteLocalAudio():await meeting.muteLocalAudio();
-      setLocalAudio(!localAudio)
+      if (localAudio === false) {
+        setLocalAudio(true);
+        await meeting.startAudio();
+        await meeting.unmuteLocalAudio();
+      }
       return true;
     } catch (ex) {
       console.log("Error occurred whern sharing local microphone", ex);
@@ -191,22 +183,21 @@ function Room(props) {
     setOpen(false);
     console.log(userID + " userid");
     console.log(roomInfo.userID);
-    deleteRoom().then((response) => {
-      if (typeof userID === "undefined") {
-        handleSessionCloseForDoctor()
-          .then(() => closeMeeting())
-          .then(() => {
-            const loadUserPage = () =>
-              history.push({
-                pathname: "/doctor/" + roomInfo.doctorID,
-              });
-            loadUserPage();
-          });
-      } else {
-        console.log("user" + userID);
-        handleSessionCloseForPatient();
-      }
-    });
+    if (typeof userID === "undefined") {
+      deleteRoom()
+        .then(() => handleSessionCloseForDoctor())
+        .then(() => closeMeeting())
+        .then(() => {
+          const loadUserPage = () =>
+            history.push({
+              pathname: "/doctor/" + roomInfo.doctorID,
+            });
+          loadUserPage();
+        });
+    } else {
+      console.log("user" + userID);
+      handleSessionCloseForPatient();
+    }
     return true;
   };
 
@@ -282,12 +273,14 @@ function Room(props) {
   const handleActionFalse = () => {
     setOpen(false);
     if (typeof userID === "undefined") {
-      closeMeeting().then(() => {
-        const loadUserPage = () =>
-          history.push({
-            pathname: "/doctor/" + roomInfo.doctorID,
-          });
-        loadUserPage();
+      deleteRoom().then(() => {
+        closeMeeting().then(() => {
+          const loadUserPage = () =>
+            history.push({
+              pathname: "/doctor/" + roomInfo.doctorID,
+            });
+          loadUserPage();
+        });
       });
     }
     return true;
@@ -325,13 +318,11 @@ function Room(props) {
   const handleReviewActionFalse = () => {
     setOpenReview(false);
     closeMeeting().then(() => {
-      closeMeeting().then(() => {
-        const loadUserPage = () =>
-          history.push({
-            pathname: "/user-page/" + roomInfo.userID,
-          });
-        loadUserPage();
-      });
+      const loadUserPage = () =>
+        history.push({
+          pathname: "/user-page/" + roomInfo.userID,
+        });
+      loadUserPage();
     });
     return true;
   };
@@ -452,29 +443,36 @@ function Room(props) {
             </DialogActions>
           </Dialog>
         </div>
-        <Grid>
-          <Grid item xs={6}>
-            {roomInfo.roomID}
-            <video
-              width="320"
-              height="240"
-              id="userVideo"
-              autoPlay
-              muted
-            ></video>
+        <Grid container>
+          <Grid
+            item
+            xs={6}
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            style={{display: "flex"}}
+          >
+            {/* {roomInfo.roomID} */}
+            <video className="styleVideo" id="userVideo" autoPlay muted></video>
           </Grid>
-          <Grid item xs={6}>
-            <span id="otherUser"></span>
-          </Grid>
+          <Grid
+            item
+            xs={6}
+            id="otherUser"
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            style={{display: "flex"}}
+          ></Grid>
         </Grid>
         <Box>
           <ButtonGroup
             variant="contained"
             aria-label="outlined primary button group"
           >
-            <Button onClick={handleLocalAudio}>Mute</Button>
+            <Button onClick={handleLocalAudio}>Start Audio</Button>
             <Button onClick={handleDisconnect}>Disconnect</Button>
-            <Button onClick={handleLocalVideo}>Video</Button>
+            <Button onClick={handleLocalVideo}>Start Video</Button>
             <Button>Their Video</Button>
             <Button>Unmute</Button>
           </ButtonGroup>
