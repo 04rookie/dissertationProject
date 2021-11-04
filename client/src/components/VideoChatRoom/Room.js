@@ -21,8 +21,8 @@ function Room(props) {
   let history = useHistory();
   const userID = useContext(CurrentUserId);
   const [userType, setUserType] = useState();
-  const [localAudio, setLocalAudio] = useState();
-  const [localVideo, setLocalVideo] = useState();
+  const [localAudio, setLocalAudio] = useState(true);
+  const [localVideo, setLocalVideo] = useState(true);
   const [roomInfo, setRoomInfo] = useState(props.location.state.data);
   useEffect(() => {
     if (typeof userID === "undefined") {
@@ -30,8 +30,6 @@ function Room(props) {
     } else {
       setUserType("patient");
     }
-    setLocalAudio(false)
-    setLocalVideo(false)
     //meeting.setMeeting();
     postRoom().then((success) => {
       console.log(success + "logging success");
@@ -42,11 +40,18 @@ function Room(props) {
           .then(() => handleStartVideo())
           .then(() => handleStartAudio())
           .then(() => handleLocalVideo())
-          .then(() => handleLocalAudio());
+          .then(() => handleLocalAudio())
+          .then(() => handleOnParticipantJoined())
       });
     });
   }, []);
 
+  async function handleOnParticipantJoined(){
+    meeting.on("participantJoined", function(participantInfo) {
+      console.log("participant has joined the room", participantInfo);
+      handleStartVideo().then(()=>handleStartAudio());
+    });
+  }
   async function postRoom() {
     try {
       console.log(roomInfo.roomID);
@@ -150,8 +155,11 @@ function Room(props) {
     }
   }
 
+  
+
   async function handleLocalVideo() {
     try {
+
       localVideo===true?await meeting.pauseLocalVideo():await meeting.resumeLocalVideo();
       setLocalVideo(!localVideo)
       return true;
@@ -169,24 +177,6 @@ function Room(props) {
       console.log("Error occurred whern sharing local microphone", ex);
     }
   }
-
-  // async function handleVideo() {
-  //   try {
-  //     const response = await meeting.startVideo();
-  //     return response;
-  //   } catch (ex) {
-  //     console.log("Error occurred whern sharing camera", ex);
-  //   }
-  // }
-
-  // async function handleMute() {
-  //   try {
-  //     const response = await meeting.startAudio();
-  //     return response;
-  //   } catch (ex) {
-  //     console.log("Error occurred whern sharing microphone", ex);
-  //   }
-  // }
 
   const [open, setOpen] = React.useState(false);
   const Transition = React.forwardRef(function Transition(props, ref) {
