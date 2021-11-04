@@ -21,7 +21,8 @@ function Room(props) {
   let history = useHistory();
   const userID = useContext(CurrentUserId);
   const [userType, setUserType] = useState();
-
+  const [localAudio, setLocalAudio] = useState();
+  const [localVideo, setLocalVideo] = useState();
   const [roomInfo, setRoomInfo] = useState(props.location.state.data);
   useEffect(() => {
     if (typeof userID === "undefined") {
@@ -29,13 +30,19 @@ function Room(props) {
     } else {
       setUserType("patient");
     }
+    setLocalAudio(false)
+    setLocalVideo(false)
     //meeting.setMeeting();
     postRoom().then((success) => {
       console.log(success + "logging success");
       joinMeeting().then(() => {
         console.log("joined");
-        showMe();
-        showThem();
+        showMe()
+          .then(() => showThem())
+          .then(() => handleStartVideo())
+          .then(() => handleStartAudio())
+          .then(() => handleLocalVideo())
+          .then(() => handleLocalAudio());
       });
     });
   }, []);
@@ -62,7 +69,7 @@ function Room(props) {
     return meetingInfo;
   }
 
-  function showMe() {
+  async function showMe() {
     meeting.on("localTrackStarted", function (item) {
       if (item.type === "video") {
         /**
@@ -83,11 +90,10 @@ function Room(props) {
         document.getElementById("userVideo").play();
       }
     });
-    console.log("true show me")
     return true;
   }
 
-  function showThem() {
+  async function showThem() {
     /**
      * remoteTrackItem = {
      *   streamId: "eaa6104b-390a-4b0a-b8d1-66f7d19f8c1a",
@@ -121,14 +127,11 @@ function Room(props) {
       // All the remote streams
       $("#userTwoVideo").append(videoTag);
     });
-    console.log("true show them")
     return true;
   }
 
-  async function handleVideo() {
+  async function handleStartVideo() {
     try {
-      console.log('meeting');
-      console.log(meeting);
       const response = await meeting.startVideo();
       return response;
     } catch (ex) {
@@ -136,7 +139,7 @@ function Room(props) {
     }
   }
 
-  async function handleMute() {
+  async function handleStartAudio() {
     try {
       const response = await meeting.startAudio();
       return response;
@@ -144,6 +147,44 @@ function Room(props) {
       console.log("Error occurred whern sharing microphone", ex);
     }
   }
+
+  async function handleLocalVideo() {
+    try {
+      localVideo===true?await meeting.pauseLocalVideo():await meeting.resumeLocalVideo();
+      setLocalVideo(!localVideo)
+      return true;
+    } catch (ex) {
+      console.log("Error occurred whern sharing camera", ex);
+    }
+  }
+
+  async function handleLocalAudio() {
+    try {
+      localAudio===true?await meeting.unmuteLocalAudio():await meeting.muteLocalAudio();
+      setLocalAudio(!localAudio)
+      return true;
+    } catch (ex) {
+      console.log("Error occurred whern sharing local microphone", ex);
+    }
+  }
+
+  // async function handleVideo() {
+  //   try {
+  //     const response = await meeting.startVideo();
+  //     return response;
+  //   } catch (ex) {
+  //     console.log("Error occurred whern sharing camera", ex);
+  //   }
+  // }
+
+  // async function handleMute() {
+  //   try {
+  //     const response = await meeting.startAudio();
+  //     return response;
+  //   } catch (ex) {
+  //     console.log("Error occurred whern sharing microphone", ex);
+  //   }
+  // }
 
   const [open, setOpen] = React.useState(false);
   const Transition = React.forwardRef(function Transition(props, ref) {
@@ -439,9 +480,9 @@ function Room(props) {
             variant="contained"
             aria-label="outlined primary button group"
           >
-            <Button onClick={handleMute}>Mute</Button>
+            <Button onClick={handleLocalAudio}>Mute</Button>
             <Button onClick={handleDisconnect}>Disconnect</Button>
-            <Button onClick={handleVideo}>Video</Button>
+            <Button onClick={handleLocalVideo}>Video</Button>
             <Button>Their Video</Button>
             <Button>Unmute</Button>
           </ButtonGroup>
