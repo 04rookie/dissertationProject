@@ -125,7 +125,9 @@ function Room(props) {
 
       // Adding the video tag to container where we will display
       // All the remote streams
-      $("#userTwoVideo").append(videoTag);
+      $("#otherUser").append(videoTag);
+      $("#otherUser")[0].height("240")
+      $("#otherUser")[0].width("320")
     });
     return true;
   }
@@ -472,7 +474,7 @@ function Room(props) {
             ></video>
           </Grid>
           <Grid item xs={6}>
-            <div id="userTwoVideo"></div>
+            <span id="otherUser"></span>
           </Grid>
         </Grid>
         <Box>
