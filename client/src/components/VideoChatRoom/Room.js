@@ -16,7 +16,8 @@ import { useHistory } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 
 function Room(props) {
-  let meeting, meetingInfo;
+  const [meeting, setMeeting] = useState(new window.Metered.Meeting());
+  let meetingInfo;
   let history = useHistory();
   const userID = useContext(CurrentUserId);
   const [userType, setUserType] = useState();
@@ -28,10 +29,11 @@ function Room(props) {
     } else {
       setUserType("patient");
     }
-    meeting = new window.Metered.Meeting();
+    //meeting.setMeeting();
     postRoom().then((success) => {
       console.log(success + "logging success");
       joinMeeting().then(() => {
+        console.log("joined");
         showMe();
         showThem();
       });
@@ -57,6 +59,7 @@ function Room(props) {
       roomURL: "instahelp.metered.live/" + roomInfo.roomID,
       name: "John Doe",
     });
+    return meetingInfo;
   }
 
   function showMe() {
@@ -80,6 +83,8 @@ function Room(props) {
         document.getElementById("userVideo").play();
       }
     });
+    console.log("true show me")
+    return true;
   }
 
   function showThem() {
@@ -116,19 +121,25 @@ function Room(props) {
       // All the remote streams
       $("#userTwoVideo").append(videoTag);
     });
+    console.log("true show them")
+    return true;
   }
 
-  function handleVideo() {
+  async function handleVideo() {
     try {
-      meeting.startVideo();
+      console.log('meeting');
+      console.log(meeting);
+      const response = await meeting.startVideo();
+      return response;
     } catch (ex) {
       console.log("Error occurred whern sharing camera", ex);
     }
   }
 
-  function handleMute() {
+  async function handleMute() {
     try {
-      meeting.startAudio();
+      const response = await meeting.startAudio();
+      return response;
     } catch (ex) {
       console.log("Error occurred whern sharing microphone", ex);
     }
@@ -163,14 +174,17 @@ function Room(props) {
         handleSessionCloseForPatient();
       }
     });
+    return true;
   };
 
   async function closeMeeting() {
     try {
-      await meeting
+      const response = await meeting
         .stopAudio()
         .then(async () => await meeting.stopVideo())
         .then(async () => await meeting.leaveMeeting());
+
+      return response;
     } catch (err) {
       console.log("err");
     }
@@ -229,6 +243,7 @@ function Room(props) {
         setOpenReview(true);
       }
     });
+    return true;
   }
 
   const handleActionFalse = () => {
@@ -242,6 +257,7 @@ function Room(props) {
         loadUserPage();
       });
     }
+    return true;
   };
 
   async function deleteRoom() {
@@ -284,6 +300,7 @@ function Room(props) {
         loadUserPage();
       });
     });
+    return true;
   };
 
   const handleReviewActionTrue = () => {
@@ -312,6 +329,7 @@ function Room(props) {
         loadUserPage();
       });
     });
+    return true;
   };
 
   async function postReviewServer(review) {
