@@ -6,12 +6,13 @@ import DoctorPageHeader from "./DoctorPageHeader";
 import DoctorInfo from "./DoctorInfo";
 import { Link, Route, Switch } from "react-router-dom";
 import EditSlot from "./EditSlot";
-import { Stack } from "@material-ui/core";
+import { Stack, Box } from "@material-ui/core";
 import AppointmentCardDoctorPage from "./AppointmentCardDoctorPage";
 import AuthHeader from "../Auth/Auth";
 import { useHistory } from "react-router";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 function DoctorPage(props) {
-
   const history = useHistory();
   const location = useLocation();
   const [doctorName, setDoctorName] = useState();
@@ -33,7 +34,7 @@ function DoctorPage(props) {
     });
     getServerDoctor(match.params.doctorID);
   }, []);
-  
+
   function makeid(length) {
     var result = "";
     var characters = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -43,13 +44,15 @@ function DoctorPage(props) {
     }
     return result;
   }
-  
-    async function getServerDoctor(doctorID) {
+
+  async function getServerDoctor(doctorID) {
     try {
-      const response = await axios.get("/api/doctor/" + doctorID, {headers: AuthHeader()});
+      const response = await axios.get("/api/doctor/" + doctorID, {
+        headers: AuthHeader(),
+      });
       console.log(response);
-      if(response.data.message==="noAccessRedirectToHome"){
-        history.push({pathname: "/home"})
+      if (response.data.message === "noAccessRedirectToHome") {
+        history.push({ pathname: "/home" });
       }
       setDoctorName(response.data.doctorName);
       setAppointment(response.data.appointment);
@@ -57,8 +60,39 @@ function DoctorPage(props) {
       console.log(error);
     }
   }
+
+  const [navbarValue, setNavbarValue] = React.useState(0);
+
+  const handleNavbarChange = (event, newValue) => {
+    setNavbarValue(newValue);
+  };
+
+  function handleLogout() {
+    localStorage.removeItem("userID");
+    history.push({ pathname: "/home" });
+  }
+
+  function handleNavbarMarket() {
+    history.push({ pathname: "/market" });
+  }
+
+  function handleNavbarProfile() {
+    history.push({ pathname: "doctor/" + getParamDoctorID() });
+  }
+
   return (
     <div>
+      <Box sx={{ width: "100%" }}>
+        <Tabs
+          value={navbarValue}
+          onChange={handleNavbarChange}
+          aria-label="nav tabs example"
+        >
+          <LinkTab label="Profile" onClick={handleNavbarProfile} />
+          <LinkTab label="Market" onClick={handleNavbarMarket} />
+          <LinkTab label="Logout" onClick={handleLogout} />
+        </Tabs>
+      </Box>
       <DoctorPageHeader
         doctorID={getParamDoctorID()}
         doctorName={doctorName}
@@ -66,12 +100,23 @@ function DoctorPage(props) {
       />
       <DoctorInfo />
       <Stack>
-        {
-          appointment.map((subs) => {
-          return <AppointmentCardDoctorPage key={makeid(20)} subs={subs}/>;
+        {appointment.map((subs) => {
+          return <AppointmentCardDoctorPage key={makeid(20)} subs={subs} />;
         })}
       </Stack>
     </div>
+  );
+}
+
+function LinkTab(props) {
+  return (
+    <Tab
+      component="a"
+      onClick={(event) => {
+        event.preventDefault();
+      }}
+      {...props}
+    />
   );
 }
 

@@ -4,6 +4,12 @@ import { Stack } from "@material-ui/core";
 import axios from "axios";
 import MarketDoctorCard from "./MarketDoctorCard";
 import ReviewCard from "./ReviewCard";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { Box } from "@material-ui/core";
+import CurrentUserId from "../Context/CurrentUserId";
+import CurrentDoctorId from "../Context/CurrentDoctorId"
+import { useContext } from "react";
 function Market(props) {
   const [doctorID, setDoctorID] = useState("");
   let history = useHistory();
@@ -11,6 +17,8 @@ function Market(props) {
   const limitValue = 10;
   const [marketData, setMarketData] = useState([]);
   const [review, setReview] = useState([]);
+  const userIDContext = useContext(CurrentUserId);
+  const doctorIDContext = useContext(CurrentDoctorId);
   useEffect(() => {
     //getServerDoctor();
     getServerDoctor().then((dataValues) => {
@@ -47,7 +55,7 @@ function Market(props) {
 
   async function getReviews(doctorID) {
     const response = await axios.get("/api/review/" + doctorID);
-    setReview(response.data)
+    setReview(response.data);
   }
 
   // generates random string of given length
@@ -61,8 +69,38 @@ function Market(props) {
     return result;
   }
 
+  const [navbarValue, setNavbarValue] = React.useState(0);
+
+  const handleNavbarChange = (event, newValue) => {
+    setNavbarValue(newValue);
+  };
+
+  function handleLogout() {
+    localStorage.removeItem("userID");
+    history.push({ pathname: "/home" });
+  }
+
+  function handleNavbarMarket() {
+    history.push({ pathname: "/market" });
+  }
+
+  function handleNavbarProfile() {
+    history.push(typeof userID === "undefined"?{ pathname: "doctor/" + doctorIDContext } :{ pathname: "user/" + userIDContext });
+  }
+
   return (
     <div>
+      <Box sx={{ width: "100%" }}>
+        <Tabs
+          value={navbarValue}
+          onChange={handleNavbarChange}
+          aria-label="nav tabs example"
+        >
+          <LinkTab label="Profile" onClick={handleNavbarProfile} />
+          <LinkTab label="Market" onClick={handleNavbarMarket} />
+          <LinkTab label="Logout" onClick={handleLogout} />
+        </Tabs>
+      </Box>
       <form>
         <input
           type="text"
@@ -95,6 +133,18 @@ function Market(props) {
         </Stack>
       </Stack>
     </div>
+  );
+}
+
+function LinkTab(props) {
+  return (
+    <Tab
+      component="a"
+      onClick={(event) => {
+        event.preventDefault();
+      }}
+      {...props}
+    />
   );
 }
 
