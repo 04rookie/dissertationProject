@@ -672,6 +672,10 @@ app.get("/api/review/:doctorID", (req, res) => {
 
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/app"));
+  res.sendFile(path.join(__dirname, "/app/build/index.html"),(err)=>{
+    if(err){
+      console.log(err)
+    }
+  });
   //res.sendFile(path.resolve(__dirname, "/app"));
 });
