@@ -8,7 +8,11 @@ import { Link, Route, Switch } from "react-router-dom";
 import EditSlot from "./EditSlot";
 import { Stack } from "@material-ui/core";
 import AppointmentCardDoctorPage from "./AppointmentCardDoctorPage";
-function DoctorPage() {
+import AuthHeader from "../Auth/Auth";
+import { useHistory } from "react-router";
+function DoctorPage(props) {
+
+  const history = useHistory();
   const location = useLocation();
   const [doctorName, setDoctorName] = useState();
   const [appointment, setAppointment] = useState([]);
@@ -42,8 +46,11 @@ function DoctorPage() {
   
     async function getServerDoctor(doctorID) {
     try {
-      const response = await axios.get("/api/doctor/" + doctorID);
+      const response = await axios.get("/api/doctor/" + doctorID, {headers: AuthHeader()});
       console.log(response);
+      if(response.data.message==="noAccessRedirectToHome"){
+        history.push({pathname: "/home"})
+      }
       setDoctorName(response.data.doctorName);
       setAppointment(response.data.appointment);
     } catch (error) {

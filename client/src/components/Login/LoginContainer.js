@@ -78,6 +78,11 @@ function LoginContainer(props) {
       console.log(response.data);
       if (response.data.loginStatus === true) {
         //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
+        // console.log(response.data.token)
+        if(response.data.token){
+          console.log(response.data.token)
+          localStorage.setItem("userID", JSON.stringify(response.data.token));
+        }
         props.setLoginContext(response.data.userID);
         const loadUserPage = () =>
           history.push({
@@ -103,7 +108,11 @@ function LoginContainer(props) {
       });
       if (response.data.loginStatus === true) {
         //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
+        if(response.data.token){
+          localStorage.setItem("userID", JSON.stringify(response.data.token));
+        }
         props.setLoginContext(response.data.userID);
+        props.setDoctorIDContext(response.data.doctorID);
         const loadUserPage = () =>
           history.push({
             pathname: "/doctor/" + response.data.doctorID,

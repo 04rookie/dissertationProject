@@ -9,8 +9,13 @@ import EditIcon from "@material-ui/icons/Edit";
 import UserPageHeader from "./UserPageHeader";
 import UserPageInfo from "./UserPageInfo";
 import AppointmentCard from "./AppointmentCard";
-function UserPageContainer() {
+import AuthHeader from "../Auth/Auth";
+import { useHistory } from "react-router";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+function UserPageContainer(props) {
   const location = useLocation();
+  const history = useHistory();
   const [userData, setUserData] = useState({
     loginStatus: null,
     userEmail: "",
@@ -46,8 +51,13 @@ function UserPageContainer() {
 
   async function getServerUser(userID) {
     try {
-      const response = await axios.get("/api/user/" + userID);
+      const response = await axios.get("/api/user/" + userID, {
+        headers: AuthHeader(),
+      });
       console.log(response.data);
+      if (response.data.message === "noAccessRedirectToHome") {
+        history.push({ pathname: "/home" });
+      }
       return response.data;
     } catch (error) {
       console.log(error);
@@ -64,8 +74,39 @@ function UserPageContainer() {
     return result;
   }
 
+  const [navbarValue, setNavbarValue] = React.useState(0);
+
+  const handleNavbarChange = (event, newValue) => {
+    setNavbarValue(newValue);
+  };
+
+  function handleLogout(){
+    localStorage.removeItem("userID")
+    history.push({pathname: "/home"})
+  }
+
+  function handleNavbarMarket(){
+    history.push({pathname: "/market"})
+  }
+
+  function handleNavbarProfile(){
+    history.push({pathname: "user/" + userData.userID})
+  }
+
+
   return (
     <div>
+      <Box sx={{ width: "100%" }}>
+        <Tabs
+          value={navbarValue}
+          onChange={handleNavbarChange}
+          aria-label="nav tabs example"
+        >
+          <LinkTab label="Profile" onClick={handleNavbarProfile} />
+          <LinkTab label="Market" onClick={handleNavbarMarket} />
+          <LinkTab label="Logout" onClick={handleLogout} />
+        </Tabs>
+      </Box>
       <UserPageHeader
         userFirstName={userData.userFirstName}
         defaultAvatar={defaultAvatar}
@@ -84,10 +125,25 @@ function UserPageContainer() {
         </Link>
       </form>
       <Stack>
-        {userSubscription.map((subs)=>{return <AppointmentCard key={makeid(20)} subs={subs}/>})}
+        {userSubscription.map((subs) => {
+          return <AppointmentCard key={makeid(20)} subs={subs} />;
+        })}
       </Stack>
     </div>
   );
 }
 
+function LinkTab(props) {
+  return (
+    <Tab
+      component="a"
+      onClick={(event) => {
+        event.preventDefault();
+      }}
+      {...props}
+    />
+  );
+}
+
 export default UserPageContainer;
+

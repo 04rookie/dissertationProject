@@ -12,7 +12,8 @@ app.listen(process.env.PORT || port, () =>
 );
 const date = require("date-and-time");
 const { format } = require("date-fns");
-
+const jwt = require('jsonwebtoken');
+const auth = require('./MiddleWare/auth');
 //Connecting to mongo db on atlas.
 mongoose.connect(process.env.MONGO_DB_URL_KEY, {
   useNewUrlParser: true,
@@ -48,6 +49,7 @@ app.post("/api/login", (req, res) => {
         if (!foundUser.userSubscription.length === 0) {
           userSubscription = foundUser.userSubscription;
         }
+        const token = jwt.sign({userID: foundUser.userID}, process.env.USER_TOKEN, {expiresIn:'72h'});
         let resObject = {
           userID: foundUser.userID,
           userFirstName: foundUser.userFirstName,
@@ -55,6 +57,7 @@ app.post("/api/login", (req, res) => {
           userEmail: foundUser.userEmail,
           loginStatus: true,
           userSubscription: userSubscription,
+          token: token
         };
         res.send(resObject);
         console.log("Login Successful");
@@ -65,6 +68,7 @@ app.post("/api/login", (req, res) => {
           userLastName: null,
           userEmail: null,
           loginStatus: false,
+          token:null
         };
         res.send(resObject);
         console.log("Login Failed");
@@ -83,12 +87,14 @@ app.post("/api/login/doctor", (req, res) => {
         );
         console.log(err);
       } else if (foundUser) {
+        const token = jwt.sign({userID: foundUser.doctorID}, process.env.USER_TOKEN, {expiresIn:'72h'});
         let resObject = {
           doctorID: foundUser.doctorID,
           doctorFirstName: foundUser.doctorFirstName,
           doctorLastName: foundUser.doctorLastName,
           doctorEmail: foundUser.doctorEmail,
           loginStatus: true,
+          token: token
         };
         res.send(resObject);
         console.log("Login Successful");
@@ -99,6 +105,7 @@ app.post("/api/login/doctor", (req, res) => {
           doctorLastName: null,
           doctorEmail: null,
           loginStatus: false,
+          token: null
         };
         res.send(resObject);
         console.log("Login Failed");
@@ -132,7 +139,7 @@ app.post("/api/register", (req, res) => {
 });
 
 //fetch user data for user page
-app.get("/api/user/:userID", (req, res) => {
+app.get("/api/user/:userID", auth,(req, res) => {
   const userID = req.params.userID;
   User.findOne({ userID: userID }, async (err, foundUser) => {
     if (err) {
@@ -321,7 +328,7 @@ app.post("/api/register-doctor", (req, res) => {
 });
 
 //to fetch data of a particular doctor
-app.get("/api/doctor/:doctorID", (req, res) => {
+app.get("/api/doctor/:doctorID", auth,(req, res) => {
   const doctorID = req.params.doctorID;
   Doctor.findOne({ doctorID: doctorID }, (err, foundUser) => {
     if (err) {

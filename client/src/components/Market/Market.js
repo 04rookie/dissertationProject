@@ -4,7 +4,7 @@ import { Stack } from "@material-ui/core";
 import axios from "axios";
 import MarketDoctorCard from "./MarketDoctorCard";
 import ReviewCard from "./ReviewCard";
-function Market() {
+function Market(props) {
   const [doctorID, setDoctorID] = useState("");
   let history = useHistory();
   const [skipValue, setSkipValue] = useState(0);
