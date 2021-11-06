@@ -35,11 +35,6 @@ const userSchema = new mongoose.Schema({
 //Creating model based on schema
 const User = mongoose.model("User", userSchema);
 
-//This route will serve homepage
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/app"));
-});
-
 //handling the post request to login
 app.post("/api/login", (req, res) => {
   User.findOne(
@@ -673,4 +668,10 @@ app.get("/api/review/:doctorID", (req, res) => {
       res.send(false);
     }
   });
+});
+
+
+app.get("*", (req, res) => {
+  //res.sendFile(path.join(__dirname, "/app"));
+  res.sendFile(path.resolve(__dirname, "/app"));
 });
