@@ -32,7 +32,7 @@ function App() {
           <Switch>
             <Route
               exact
-              path="/"
+              path="/login"
               render={(props) => (
                 <LoginApp
                   {...props}
@@ -89,6 +89,7 @@ function App() {
               render={(props) => <Room {...props} />}
             />
             <Route exact path="/home" render={(props) => <Home {...props} />} />
+            <Route exact path="/" render={(props) => <Home {...props} />} />
           </Switch>
         </CurrentDoctorId.Provider>
       </CurrentUserId.Provider>

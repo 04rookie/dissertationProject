@@ -86,7 +86,7 @@ function RegisterContainer(props) {
         <button type="submit" onClick={handleSubmit} name="signupButton">
           Submit
         </button>
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/login" style={{ textDecoration: "none" }}>
           <button type="submit" name="goToLoginButton">
             Go to login page
           </button>
