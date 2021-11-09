@@ -69,7 +69,7 @@ function Market(props) {
     return result;
   }
 
-  const [navbarValue, setNavbarValue] = React.useState(0);
+  const [navbarValue, setNavbarValue] = React.useState(1);
 
   const handleNavbarChange = (event, newValue) => {
     setNavbarValue(newValue);
@@ -85,7 +85,15 @@ function Market(props) {
   }
 
   function handleNavbarProfile() {
-    history.push(typeof userID === "undefined"?{ pathname: "doctor/" + doctorIDContext } :{ pathname: "user/" + userIDContext });
+    console.log("handleNavBarProfile")
+    console.log(typeof userID)
+    console.log(userIDContext)
+    if(typeof userIDContext === "undefined"){
+      history.push({ pathname: "/doctor/" + doctorIDContext })
+    }
+    else{
+      history.push({ pathname: "/user-page/" + userIDContext });
+    }
   }
 
   return (

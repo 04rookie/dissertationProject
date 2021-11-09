@@ -90,7 +90,7 @@ function UserPageContainer(props) {
   }
 
   function handleNavbarProfile(){
-    history.push({pathname: "user/" + userData.userID})
+    history.push({pathname: "/user-page/" + userData.userID})
   }
 
 
