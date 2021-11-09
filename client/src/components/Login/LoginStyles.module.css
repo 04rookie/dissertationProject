@@ -14,7 +14,7 @@
 
 .container {
   margin: 0 auto;
-  padding: 23rem 0;
+  padding: 15vw 0;
   text-align: center;
 }
 
@@ -68,5 +68,6 @@
   text-align: center;
   height: 100vh;
   overflow: hidden;
-  padding-top: 23rem;
+  padding-top: 15vw;
 }
+

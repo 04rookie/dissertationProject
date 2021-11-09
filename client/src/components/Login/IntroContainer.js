@@ -13,17 +13,17 @@ function IntroContainer() {
         <div className="carousel-inner">
           <div className="carousel-item active container-fluid">
             <i className="fas fa-hands-helping fa-10x"></i>
-            <h5 className="CarouselHeading">Reach out.</h5>
+            <h5 style={{marginTop:"5vw"}} className="CarouselHeading gap">Reach out.</h5>
             <p>Stay in your comfort zone.</p>
           </div>
           <div className="carousel-item container-fluid">
             <i className="fas fa-user-shield fa-10x"></i>
-            <h5 className="CarouselHeading">Stay anonymous.</h5>
+            <h5 style={{marginTop:"5vw"}} className="CarouselHeading gap">Stay anonymous.</h5>
             <p>We value your privacy.</p>
           </div>
           <div className="carousel-item container-fluid">
             <i className="fas fa-heartbeat fa-10x"></i>
-            <h5 className="CarouselHeading"> You have the power to fix it.</h5>
+            <h5 style={{marginTop:"5vw"}} className="CarouselHeading gap"> You have the power to fix it.</h5>
             <p>Mental illness is one of the most un-treated problems.</p>
           </div>
         </div>

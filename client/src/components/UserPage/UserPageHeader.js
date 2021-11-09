@@ -1,13 +1,54 @@
 import React from "react";
 import { Box, Avatar, Fab } from "@material-ui/core";
-import styles from "./UserPageContainer.module.css";
-import EditIcon from '@material-ui/icons/Edit';
-function UserPageHeader(props){
-    return (<Box className={styles.userPageHeader}>
-    <Avatar className={styles.userPageHeaderAvatar} sx={{width:"17vh", height:"17vh"}} alt="Remy Sharp" src={props.defaultAvatar} />
-    <h3 className={styles.userPageHeaderText}>{props.userFirstName}</h3>
-    <Fab className={styles.userPageHeaderFAB} color="primary" aria-label="edit"> <EditIcon/></Fab>
-</Box>)
+function UserPageHeader(props) {
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        padding: "2vw",
+        backgroundColor: "#00ADB5",
+      }}
+    >
+      <h1
+        style={{
+          color: "#222831",
+          fontSize: ".6vw",
+          fontFamily: "Montserrat",
+        }}
+      >
+        User ID: {props.userData.userID}
+      </h1>
+      <h1
+        style={{
+          color: "#222831",
+          fontSize: ".6vw",
+          fontFamily: "Montserrat",
+        }}
+      >
+        Member since: {props.userData.userJoinDate }
+      </h1>
+      <h1
+        style={{
+          color: "#222831",
+          fontSize: "1vw",
+          fontFamily: "Montserrat",
+          marginTop: "2vw"
+        }}
+      >
+        Name: {props.userData.userFirstName + " " + props.userData.userLastName}
+      </h1>
+      <h1
+        style={{
+          color: "#222831",
+          fontSize: "1vw",
+          fontFamily: "Montserrat",
+        }}
+      >
+        User Email: {props.userData.userEmail}
+      </h1>
+      {console.log(props.userData)}
+    </Box>
+  );
 }
 
 export default UserPageHeader;

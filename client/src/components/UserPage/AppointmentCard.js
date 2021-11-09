@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent } from "@material-ui/core";
+import { Button, Card, CardActions, CardContent, Grid } from "@material-ui/core";
 import React from "react";
 import { Typography } from "@material-ui/core";
 import format from "date-fns/format";
@@ -6,6 +6,7 @@ import { matchPath, useHistory, useLocation } from "react-router";
 import axios from "axios";
 function AppointmentCard(props) {
   let location = useLocation();
+  const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   let history = useHistory();
   function handleJoinClick() {
     getRoomFromServer().then((response) =>
@@ -64,19 +65,62 @@ function AppointmentCard(props) {
   }
 
   return (
-    <Card>
+    <Grid spacing={3}>
+    <Card sx={{width:"25vw", marginLeft:"5vw", marginBottom:"2.5vw", marginTop:"2.5vw", backgroundColor:"#EEEEEE"}}>
       <CardContent>
-        <Typography component={"span"} variant="body2">
-          Start time: {props.subs.startTime} <br />
-          End time: {props.subs.endTime}
-        </Typography>
+      <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Day: {dayMap[props.subs.day]}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Appointment ID: {props.subs.appointmentID}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Doctor ID: {props.subs.doctorID}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Starts at: {props.subs.startTime}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Ends at: {props.subs.endTime}
+        </h1>
       </CardContent>
       <CardActions>
-        <Button variant="outlined" onClick={handleJoinClick}>
+        <Button variant="contained" style={{backgroundColor:"#222831", color:"#EEEEEE"}} onClick={handleJoinClick}>
           Join
         </Button>
       </CardActions>
     </Card>
+    </Grid>
   );
 }
 

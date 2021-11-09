@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { matchPath, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Avatar, Box, Fab, Stack } from "@material-ui/core";
+import { Avatar, Box, Fab, Stack, Grid } from "@material-ui/core";
 import defaultAvatar from "../../images/chillies.png";
 import styles from "./UserPageContainer.module.css";
 import EditIcon from "@material-ui/icons/Edit";
 import UserPageHeader from "./UserPageHeader";
-import UserPageInfo from "./UserPageInfo";
 import AppointmentCard from "./AppointmentCard";
 import AuthHeader from "../Auth/Auth";
 import { useHistory } from "react-router";
@@ -80,55 +79,44 @@ function UserPageContainer(props) {
     setNavbarValue(newValue);
   };
 
-  function handleLogout(){
-    localStorage.removeItem("userID")
-    history.push({pathname: "/home"})
+  function handleLogout() {
+    localStorage.removeItem("userID");
+    history.push({ pathname: "/home" });
   }
 
-  function handleNavbarMarket(){
-    history.push({pathname: "/market"})
+  function handleNavbarMarket() {
+    history.push({ pathname: "/market" });
   }
 
-  function handleNavbarProfile(){
-    history.push({pathname: "/user-page/" + userData.userID})
+  function handleNavbarProfile() {
+    history.push({ pathname: "/user-page/" + userData.userID });
   }
-
 
   return (
-    <div>
+    <div
+      style={{ height: "100vh", color: "#EEEEEE", backgroundColor: "#222831", overflow:"hidden" }}
+    >
       <Box sx={{ width: "100%" }}>
         <Tabs
           value={navbarValue}
           onChange={handleNavbarChange}
           aria-label="nav tabs example"
+          textColor="#EEEEEE"
+          indicatorColor="#EEEEEE"
         >
           <LinkTab label="Profile" onClick={handleNavbarProfile} />
           <LinkTab label="Market" onClick={handleNavbarMarket} />
           <LinkTab label="Logout" onClick={handleLogout} />
         </Tabs>
       </Box>
-      <UserPageHeader
-        userFirstName={userData.userFirstName}
-        defaultAvatar={defaultAvatar}
-      />
-      <UserPageInfo />
-      <form>
-        <Link to="/video-chat-room" style={{ textDecoration: "none" }}>
-          <button type="submit" name="Call">
-            Call
-          </button>
-        </Link>
-        <Link to="/market" style={{ textDecoration: "none" }}>
-          <button type="submit" name="Market">
-            Market
-          </button>
-        </Link>
-      </form>
-      <Stack>
-        {userSubscription.map((subs) => {
-          return <AppointmentCard key={makeid(20)} subs={subs} />;
-        })}
-      </Stack>
+      <UserPageHeader userData={userData} />
+      <Box sx={{ backgroundColor: "#222831" }}>
+        <Grid container spacing={3} columns={3} sx={{ margin: "0vw" }}>
+          {userSubscription.map((subs) => {
+            return <AppointmentCard key={makeid(20)} subs={subs} />;
+          })}
+        </Grid>
+      </Box>
     </div>
   );
 }
@@ -146,4 +134,3 @@ function LinkTab(props) {
 }
 
 export default UserPageContainer;
-
