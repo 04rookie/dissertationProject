@@ -96,21 +96,22 @@ function Market(props) {
   }
 
   return (
-    <div>
-      <Box sx={{ width: "100%" }}>
+    <div style={{ height: "100vh", color: "#EEEEEE", backgroundColor: "#393E46"}}>
+      <Box sx={{ width: "100%", backgroundColor:"#222831", color:"#EEEEEE" }}>
         <Tabs
           value={navbarValue}
           onChange={handleNavbarChange}
           aria-label="nav tabs example"
           textColor="#EEEEEE"
           indicatorColor="#EEEEEE"
+          backgroundColor="#EEEEEE"
         >
           <LinkTab label="Profile" onClick={handleNavbarProfile} />
           <LinkTab label="Market" onClick={handleNavbarMarket} />
           <LinkTab label="Logout" onClick={handleLogout} />
         </Tabs>
       </Box>
-      <fragment style={{ display: "block", padding:"5vw" , backgroundColor:"#393E46"}}>
+      <div style={{ display: "block", padding:"5vw" , backgroundColor:"#393E46"}}>
         <Grid container justify="center" spacing={6}>
           <Grid item align="center" xs={6}>
             <Grid container justify="center" spacing={7}>
@@ -133,7 +134,7 @@ function Market(props) {
             })}
           </Grid>
         </Grid>
-      </fragment>
+      </div>
     </div>
   );
 }
