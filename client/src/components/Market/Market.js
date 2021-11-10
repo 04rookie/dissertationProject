@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Stack } from "@material-ui/core";
+import { Stack, Grid } from "@material-ui/core";
 import axios from "axios";
 import MarketDoctorCard from "./MarketDoctorCard";
 import ReviewCard from "./ReviewCard";
@@ -8,7 +8,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Box } from "@material-ui/core";
 import CurrentUserId from "../Context/CurrentUserId";
-import CurrentDoctorId from "../Context/CurrentDoctorId"
+import CurrentDoctorId from "../Context/CurrentDoctorId";
 import { useContext } from "react";
 function Market(props) {
   const [doctorID, setDoctorID] = useState("");
@@ -85,13 +85,12 @@ function Market(props) {
   }
 
   function handleNavbarProfile() {
-    console.log("handleNavBarProfile")
-    console.log(typeof userID)
-    console.log(userIDContext)
-    if(typeof userIDContext === "undefined"){
-      history.push({ pathname: "/doctor/" + doctorIDContext })
-    }
-    else{
+    console.log("handleNavBarProfile");
+    console.log(typeof userID);
+    console.log(userIDContext);
+    if (typeof userIDContext === "undefined") {
+      history.push({ pathname: "/doctor/" + doctorIDContext });
+    } else {
       history.push({ pathname: "/user-page/" + userIDContext });
     }
   }
@@ -103,43 +102,38 @@ function Market(props) {
           value={navbarValue}
           onChange={handleNavbarChange}
           aria-label="nav tabs example"
+          textColor="#EEEEEE"
+          indicatorColor="#EEEEEE"
         >
           <LinkTab label="Profile" onClick={handleNavbarProfile} />
           <LinkTab label="Market" onClick={handleNavbarMarket} />
           <LinkTab label="Logout" onClick={handleLogout} />
         </Tabs>
       </Box>
-      <form>
-        <input
-          type="text"
-          name="doctorID"
-          value={doctorID}
-          onChange={handleChange}
-        ></input>
-        <button type="submit" onClick={handleClick}>
-          Book
-        </button>
-      </form>
-      <Stack direction="row">
-        <Stack spacing={3}>
-          {marketData.map((cardData) => {
-            return (
-              <MarketDoctorCard
-                key={cardData.doctorID}
-                doctorID={cardData.doctorID}
-                doctorName={cardData.doctorName}
-                doctorRate={cardData.doctorRate}
-                handleClickReviews={handleClickReviews}
-              />
-            );
-          })}
-        </Stack>
-        <Stack spacing={3}>
-          {review.map((data) => {
-            return <ReviewCard key={makeid(5)} data={data} />;
-          })}
-        </Stack>
-      </Stack>
+      <fragment style={{ display: "block", padding:"5vw" , backgroundColor:"#393E46"}}>
+        <Grid container justify="center" spacing={6}>
+          <Grid item align="center" xs={6}>
+            <Grid container justify="center" spacing={7}>
+              {marketData.map((cardData) => {
+                return (
+                  <MarketDoctorCard
+                    key={cardData.doctorID}
+                    doctorID={cardData.doctorID}
+                    doctorName={cardData.doctorFirstName + " " + cardData.doctorLastName}
+                    doctorRate={cardData.doctorRate}
+                    handleClickReviews={handleClickReviews}
+                  />
+                );
+              })}
+            </Grid>
+          </Grid>
+          <Grid item align="center" xs={6}>
+            {review.map((data) => {
+              return <ReviewCard key={makeid(5)} data={data} />;
+            })}
+          </Grid>
+        </Grid>
+      </fragment>
     </div>
   );
 }

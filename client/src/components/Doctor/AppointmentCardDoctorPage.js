@@ -138,7 +138,7 @@ function AppointmentCardDoctorPage(props) {
         </h1>
         </CardContent>
         <CardActions>
-          <Button variant="outlined" onClick={handleClick}>
+          <Button variant="contained" style={{backgroundColor:"#222831", color:"#EEEEEE"}} onClick={handleClick}>
             Join
           </Button>
         </CardActions>
