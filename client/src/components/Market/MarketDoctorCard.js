@@ -30,7 +30,7 @@ function MarketDoctorCard(props) {
 
   return (
     <Grid item align="center" xs={6}>
-      <Card style={{backgroundColor:"#222831", padding:"2vw"}}>
+      <Card style={{backgroundColor:"#222831", padding:"2vw", minWidth:"22vw"}}>
         <CardContent align="left">
           <h1
             style={{
