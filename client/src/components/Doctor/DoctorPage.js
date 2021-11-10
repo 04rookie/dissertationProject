@@ -6,7 +6,7 @@ import DoctorPageHeader from "./DoctorPageHeader";
 import DoctorInfo from "./DoctorInfo";
 import { Link, Route, Switch } from "react-router-dom";
 import EditSlot from "./EditSlot";
-import { Stack, Box } from "@material-ui/core";
+import { Stack, Box, Grid } from "@material-ui/core";
 import AppointmentCardDoctorPage from "./AppointmentCardDoctorPage";
 import AuthHeader from "../Auth/Auth";
 import { useHistory } from "react-router";
@@ -15,7 +15,9 @@ import Tab from "@mui/material/Tab";
 function DoctorPage(props) {
   const history = useHistory();
   const location = useLocation();
+  const [doctorData, setDoctorData] = useState();
   const [doctorName, setDoctorName] = useState();
+  const [doctorEmail, setDoctorEmail] = useState();
   const [appointment, setAppointment] = useState([]);
   function getParamDoctorID() {
     const match = matchPath(location.pathname, {
@@ -50,11 +52,16 @@ function DoctorPage(props) {
       const response = await axios.get("/api/doctor/" + doctorID, {
         headers: AuthHeader(),
       });
-      console.log(response);
+      console.log(response.data.doctorName);
+      console.log("-----")
       if (response.data.message === "noAccessRedirectToHome") {
         history.push({ pathname: "/home" });
       }
-      setDoctorName(response.data.doctorName);
+      setDoctorData((prev)=>{
+        return {...response.data}
+      })
+      setDoctorName(response.data.doctorFirstName + " " + response.data.doctorLastName);
+      setDoctorEmail(response.data.doctorEmail)
       setAppointment(response.data.appointment);
     } catch (error) {
       console.log(error);
@@ -81,12 +88,21 @@ function DoctorPage(props) {
   }
 
   return (
-    <div>
+    <div
+      style={{
+        height: "100vh",
+        color: "#EEEEEE",
+        backgroundColor: "#222831",
+        overflow: "hidden",
+      }}
+    >
       <Box sx={{ width: "100%" }}>
         <Tabs
           value={navbarValue}
           onChange={handleNavbarChange}
           aria-label="nav tabs example"
+          textColor="#EEEEEE"
+          indicatorColor="#EEEEEE"
         >
           <LinkTab label="Profile" onClick={handleNavbarProfile} />
           <LinkTab label="Market" onClick={handleNavbarMarket} />
@@ -96,14 +112,15 @@ function DoctorPage(props) {
       <DoctorPageHeader
         doctorID={getParamDoctorID()}
         doctorName={doctorName}
+        doctorEmail={doctorEmail}
         defaultAvatar={defaultAvatar}
+        doctorData={doctorData}
       />
-      <DoctorInfo />
-      <Stack>
+      <Grid container spacing={3} columns={3} sx={{ margin: "0vw" }}>
         {appointment.map((subs) => {
           return <AppointmentCardDoctorPage key={makeid(20)} subs={subs} />;
         })}
-      </Stack>
+      </Grid>
     </div>
   );
 }

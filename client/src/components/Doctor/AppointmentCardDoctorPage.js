@@ -1,11 +1,12 @@
-import { Button, Card, CardActions, CardContent } from "@material-ui/core";
-import React from "react";
+import { Button, Card, CardActions, CardContent, Grid } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import { Typography } from "@material-ui/core";
 import format from "date-fns/format";
 import axios from "axios";
 import { useHistory } from "react-router";
 function AppointmentCardDoctorPage(props) {
   let history = useHistory();
+  const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   function handleClick() {
     getRoomFromServer().then((response) =>
       response.roomID === null
@@ -15,6 +16,20 @@ function AppointmentCardDoctorPage(props) {
           })
         : loadRoomComponent(response)
     );
+  }
+
+  const [userName, setUserName] = useState("");
+  
+  useEffect(()=>{
+    getUserName().then((response)=>{
+      setUserName(response.data.userFirstName + " " + response.data.userLastName);
+    });
+
+  },[])
+
+  async function getUserName(){
+    const response = await axios.get("/api/public/user/" + props.subs.userID);
+    return response;
   }
 
   async function getRoomFromServer() {
@@ -64,21 +79,71 @@ function AppointmentCardDoctorPage(props) {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Typography component={"span"} variant="body2">
-          {/* Start time: {props.startTime} <br /> End time: {props.endTime} */}
-          {/* Start time: {props.startTime} */}
-          Start time: {props.subs.startTime}
-          <br /> End time: {props.subs.endTime}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button variant="outlined" onClick={handleClick}>
-          Join
-        </Button>
-      </CardActions>
-    </Card>
+    <Grid spacing={3}>
+      <Card sx={{width:"25vw", marginLeft:"5vw", marginBottom:"2.5vw", marginTop:"2.5vw", backgroundColor:"#EEEEEE"}}>
+        <CardContent>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Day: {dayMap[props.subs.day]}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Appointment ID: {props.subs.appointmentID}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Patient ID: {props.subs.userID}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Patient Name: {userName}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Starts at: {props.subs.startTime}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Ends at: {props.subs.endTime}
+        </h1>
+        </CardContent>
+        <CardActions>
+          <Button variant="outlined" onClick={handleClick}>
+            Join
+          </Button>
+        </CardActions>
+      </Card>
+    </Grid>
   );
 }
 

@@ -7,14 +7,42 @@ import { join } from "path";
 import EditSlot from "./EditSlot";
 function DoctorPageHeader(props) {
   return (
-    <Box className={styles.DoctorHeader}>
-      <Avatar
-        className={styles.DoctorHeaderAvatar}
-        sx={{ width: "17vh", height: "17vh" }}
-        alt="Remy Sharp"
-        src={props.defaultAvatar}
-      />
-      <h3 className={styles.DoctorHeaderText}>{props.doctorName}</h3>
+
+    <Box
+      sx={{
+        width: "100%",
+        padding: "2vw",
+        backgroundColor: "#00ADB5",
+      }}
+    >
+      <h1
+        style={{
+          color: "#222831",
+          fontSize: ".6vw",
+          fontFamily: "Montserrat",
+        }}
+      >
+        Doctor ID: {props.doctorID}
+      </h1>
+      <h1
+        style={{
+          color: "#222831",
+          fontSize: "1vw",
+          fontFamily: "Montserrat",
+          marginTop: "2vw"
+        }}
+      >
+        Name: {props.doctorName}
+      </h1>
+      <h1
+        style={{
+          color: "#222831",
+          fontSize: "1vw",
+          fontFamily: "Montserrat",
+        }}
+      >
+        Email: {props.doctorEmail}
+      </h1>
       <Link
         to={"/edit-slot/" + props.doctorID}
         style={{ textDecoration: "none" }}

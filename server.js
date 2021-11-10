@@ -677,6 +677,40 @@ app.get("/api/review/:doctorID", (req, res) => {
   });
 });
 
+app.get("/api/public/doctor/:doctorID/",(req, res) => {
+  const doctorID = req.params.doctorID;
+  Doctor.findOne({ doctorID: doctorID }, (err, foundUser) => {
+    if (err) {
+      console.log("Error inside findOne Query in server inside /doctor");
+      console.log(err);
+    } else if (foundUser) {
+      foundUser.doctorPassword = null;
+      res.send(foundUser);
+      console.log("user fetched");
+    } else {
+      res.send(false);
+      console.log("No user found");
+    }
+  });
+});
+
+app.get("/api/public/user/:userID/",(req, res) => {
+  const userID = req.params.userID;
+  User.findOne({ userID: userID }, (err, foundUser) => {
+    if (err) {
+      console.log("Error inside findOne Query in server inside /doctor");
+      console.log(err);
+    } else if (foundUser) {
+      foundUser.userPassword = null;
+      res.send(foundUser);
+      console.log("user fetched");
+    } else {
+      res.send(false);
+      console.log("No user found");
+    }
+  });
+});
+
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "/app","/index.html"),(err)=>{

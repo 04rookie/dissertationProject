@@ -1,13 +1,26 @@
 import { Button, Card, CardActions, CardContent, Grid } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "@material-ui/core";
 import format from "date-fns/format";
 import { matchPath, useHistory, useLocation } from "react-router";
 import axios from "axios";
 function AppointmentCard(props) {
   let location = useLocation();
+  const [doctorName, setDoctorName] = useState("");
   const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   let history = useHistory();
+  useEffect(()=>{
+    getDoctorName().then((response)=>{
+      setDoctorName(response.data.doctorFirstName + " " + response.data.doctorLastName);
+    });
+
+  },[])
+
+  async function getDoctorName(){
+    const response = await axios.get("/api/public/doctor/" + props.subs.doctorID);
+    return response;
+  }
+
   function handleJoinClick() {
     getRoomFromServer().then((response) =>
       response.roomID === null
@@ -94,6 +107,15 @@ function AppointmentCard(props) {
           }}
         >
            Doctor ID: {props.subs.doctorID}
+        </h1>
+        <h1
+          style={{
+            color: "#222831",
+            fontSize: ".8vw",
+            fontFamily: "Montserrat",
+          }}
+        >
+           Doctor Name: {doctorName}
         </h1>
         <h1
           style={{
