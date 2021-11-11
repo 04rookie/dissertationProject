@@ -14,7 +14,7 @@ import CurrentUserId from "../Context/CurrentUserId";
 import TextField from "@mui/material/TextField";
 import { useHistory } from "react-router-dom";
 import Rating from "@mui/material/Rating";
-
+import AuthHeader from "../Auth/Auth";
 function Room(props) {
   const [meeting, setMeeting] = useState(new window.Metered.Meeting());
   let meetingInfo;
@@ -145,11 +145,9 @@ function Room(props) {
   async function handleLocalVideo() {
     try {
       console.log("before: " + localVideo);
-      if (localVideo === false) {
-        setLocalVideo(true);
-        await meeting.startVideo();
-        await meeting.resumeLocalVideo();
-      }
+      //setLocalVideo(true);
+      await meeting.startVideo();
+      await meeting.resumeLocalVideo();
       console.log("after: " + localVideo);
       return true;
     } catch (ex) {
@@ -159,11 +157,9 @@ function Room(props) {
 
   async function handleLocalAudio() {
     try {
-      if (localAudio === false) {
-        setLocalAudio(true);
-        await meeting.startAudio();
-        await meeting.unmuteLocalAudio();
-      }
+      //setLocalAudio(true);
+      await meeting.startAudio();
+      await meeting.unmuteLocalAudio();
       return true;
     } catch (ex) {
       console.log("Error occurred whern sharing local microphone", ex);
@@ -213,7 +209,9 @@ function Room(props) {
   }
 
   async function handleSessionCloseForDoctor() {
-    await axios.get("/api/user/" + roomInfo.userID).then(async (response) => {
+    await axios.get("/api/user/" + roomInfo.userID, {
+      headers: AuthHeader(),
+    }).then(async (response) => {
       console.log("loggin response");
       console.log(response);
       console.log(response.data.sessionCount + " response session count");
@@ -248,7 +246,9 @@ function Room(props) {
   }
 
   async function handleSessionCloseForPatient() {
-    await axios.get("/api/user/" + roomInfo.userID).then(async (response) => {
+    await axios.get("/api/user/" + roomInfo.userID, {
+      headers: AuthHeader(),
+    }).then(async (response) => {
       let sessionCount = response.data.sessionCount.filter(
         (element) => element.doctorID === roomInfo.doctorID
       );
@@ -471,8 +471,6 @@ function Room(props) {
             <Button onClick={handleLocalAudio}>Start Audio</Button>
             <Button onClick={handleDisconnect}>Disconnect</Button>
             <Button onClick={handleLocalVideo}>Start Video</Button>
-            <Button>Their Video</Button>
-            <Button>Unmute</Button>
           </ButtonGroup>
         </Box>
       </Stack>
