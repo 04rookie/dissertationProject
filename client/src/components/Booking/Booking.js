@@ -9,7 +9,7 @@ import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
-import { Stack, Box } from "@mui/material";
+import { Stack, Box, Grid } from "@mui/material";
 import AppointmentCard from "./AppointmentCard";
 //import { Button } from "@material-ui/core";
 import Button from "@mui/material/Button";
@@ -130,11 +130,15 @@ function Booking() {
 
   async function postServerAppointment() {
     try {
-      const response = axios.patch("/api/booking/" + doctorID, [sessionCount, data], {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = axios.patch(
+        "/api/booking/" + doctorID,
+        [sessionCount, data],
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return response;
     } catch (error) {
       console.log(error);
@@ -252,60 +256,68 @@ function Booking() {
           <Button onClick={handlePay}>Pay</Button>
         </DialogActions>
       </Dialog>
-      <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
-        <AppBar position="static">
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="secondary"
-            textColor="inherit"
-            variant="fullWidth"
-            aria-label="full width tabs example"
+      <div style={{ color: "#393e46", backgroundColor: "#EEEEEE", minHeight:"100vh" }}>
+        <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
+          <AppBar position="static">
+            <div style={{color: "#EEEEEE", backgroundColor: "#393E46"}}>
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                indicatorColor="secondary"
+                textColor="#00ADB5"
+                backgroundColor="#222831"
+                variant="fullWidth"
+                aria-label="full width tabs example"
+              >
+                {tabData.map((item) => {
+                  return (
+                    <Tab
+                      key={makeid(20)}
+                      label={item.label}
+                      {...a11yProps(item.tabIndex)}
+                    />
+                  );
+                })}
+              </Tabs>
+            </div>
+          </AppBar>
+          <SwipeableViews
+            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+            index={value}
+            onChangeIndex={handleChangeIndex}
+            style={{ color: "#393e46", backgroundColor: "#EEEEEE" }}
           >
             {tabData.map((item) => {
               return (
-                <Tab
+                <TabPanel
                   key={makeid(20)}
-                  label={item.label}
-                  {...a11yProps(item.tabIndex)}
-                />
+                  value={item.tabIndex}
+                  index={item.tabIndex}
+                  dir={theme.direction}
+                >
+                  <Grid container spacing={3}>
+                    {data[value].map((cardData) => {
+                      return (
+                        <AppointmentCard
+                          key={makeid(20)}
+                          doctorID={doctorID}
+                          appointmentData={cardData}
+                          setData={setData}
+                        />
+                      );
+                    })}
+                  </Grid>
+                </TabPanel>
               );
             })}
-          </Tabs>
-        </AppBar>
-        <SwipeableViews
-          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-          index={value}
-          onChangeIndex={handleChangeIndex}
-        >
-          {tabData.map((item) => {
-            return (
-              <TabPanel
-                key={makeid(20)}
-                value={item.tabIndex}
-                index={item.tabIndex}
-                dir={theme.direction}
-              >
-                <Stack component={"span"} spacing={3}>
-                  {data[value].map((cardData) => {
-                    return (
-                      <AppointmentCard
-                        key={makeid(20)}
-                        doctorID={doctorID}
-                        appointmentData={cardData}
-                        setData={setData}
-                      />
-                    );
-                  })}
-                </Stack>
-              </TabPanel>
-            );
-          })}
-        </SwipeableViews>
-      </Box>
-      <Button variant="outlined" onClick={handleClickProceed}>
-        Proceed
-      </Button>
+          </SwipeableViews>
+        </Box>
+        <div align="center">
+        <Button style={{color: "#EEEEEE", backgroundColor: "#393E46"}} onClick={handleClickProceed}>
+          Proceed
+        </Button>
+        </div>
+      </div>
     </Stack>
   );
 }

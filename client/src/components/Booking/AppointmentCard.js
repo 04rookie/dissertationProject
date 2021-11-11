@@ -1,6 +1,6 @@
 import { Button, Card, CardActions, CardContent } from "@material-ui/core";
 import React, { useContext, useState } from "react";
-import { Typography } from "@material-ui/core";
+import { Typography, Grid } from "@material-ui/core";
 import CurrentUserId from "../Context/CurrentUserId";
 import axios from "axios";
 function AppointmentCard(props) {
@@ -14,7 +14,7 @@ function AppointmentCard(props) {
             dayData[i].appointmentID = makeid(20);
             dayData[i].userID = userId;
             dayData[i].status = "reserved";
-            dayData[i].roomID = null
+            dayData[i].roomID = null;
           }
         }
         return [...prev];
@@ -27,7 +27,7 @@ function AppointmentCard(props) {
             dayData[i].appointmentID = null;
             dayData[i].userID = null;
             dayData[i].status = "open";
-            dayData[i].roomID = null
+            dayData[i].roomID = null;
           }
         }
         return [...prev];
@@ -46,21 +46,28 @@ function AppointmentCard(props) {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Typography component={"span"} variant="body2">
-          {props.appointmentData.startTime} <br />
-          {props.appointmentData.endTime}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button variant="outlined" onClick={handleClick}>
-          {props.appointmentData.status === "open"
-            ? "Add to cart"
-            : "Remove from cart"}
-        </Button>
-      </CardActions>
-    </Card>
+    <Grid item xs={3}>
+      <Card style={{ color: "#EEEEEE", backgroundColor: "#393E46", padding:"2vw" }}>
+        <CardContent>
+          <h1
+            style={{
+              color: "#EEEEEE",
+              fontSize: ".8vw",
+            }}
+          >
+            Starts at: {props.appointmentData.startTime}
+            <br /> Ends at: {props.appointmentData.endTime}
+          </h1>
+        </CardContent>
+        <CardActions>
+          <Button style={{ color: "#393E46", backgroundColor: "#EEEEEE" }} variant="contained" onClick={handleClick}>
+            {props.appointmentData.status === "open"
+              ? "Add to cart"
+              : "Remove from cart"}
+          </Button>
+        </CardActions>
+      </Card>
+    </Grid>
   );
 }
 

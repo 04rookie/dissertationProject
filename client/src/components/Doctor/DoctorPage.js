@@ -118,7 +118,12 @@ function DoctorPage(props) {
       />
       <Grid container spacing={3} columns={3} sx={{ margin: "0vw" }}>
         {appointment.map((subs) => {
-          return <AppointmentCardDoctorPage key={makeid(20)} subs={subs} />;
+          if(subs.appointmentID!==null){ 
+            return <AppointmentCardDoctorPage key={makeid(20)} subs={subs} />;
+          }
+          else{
+            return <span></span>
+          }
         })}
       </Grid>
     </div>

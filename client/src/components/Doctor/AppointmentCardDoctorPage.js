@@ -108,6 +108,7 @@ function AppointmentCardDoctorPage(props) {
           }}
         >
            Patient ID: {props.subs.userID}
+
         </h1>
         <h1
           style={{
