@@ -148,7 +148,7 @@ function EditSlot(props) {
         day: value,
         status: "open",
         userID: null,
-        roomID: null
+        roomID: null,
       });
       return temp;
     });
@@ -212,7 +212,7 @@ function EditSlot(props) {
             day: data.days[outer][inner].day,
             status: data.days[outer][inner].status,
             userID: data.days[outer][inner].userID,
-            roomID: data.days[outer][inner].roomID
+            roomID: data.days[outer][inner].roomID,
           });
         }
       }
@@ -233,33 +233,38 @@ function EditSlot(props) {
   }
 
   return (
-    <Grid container spacing={2}>
+    <div style={{color: "#393e46", backgroundColor: "#EEEEEE"}}>
+    <Grid style={{backgroundColor:"#EEEEEE", height:"100%" }} container spacing={2}>
       <Grid item xs={8}>
-        <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
+        <Box sx={{ bgcolor: "background.paper", width: "100%"}}>
           <AppBar position="static">
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              indicatorColor="secondary"
-              textColor="inherit"
-              variant="fullWidth"
-              aria-label="full width tabs example"
-            >
-              {tabData.map((item) => {
-                return (
-                  <Tab
-                    key={item.tabIndex}
-                    label={item.label}
-                    {...a11yProps(item.tabIndex)}
-                  />
-                );
-              })}
-            </Tabs>
+            <div style={{color: "#EEEEEE", backgroundColor: "#393E46"}}>
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                indicatorColor="secondary"
+                textColor="#00ADB5"
+                backgroundColor="#222831"
+                variant="fullWidth"
+                aria-label="full width tabs example"
+              >
+                {tabData.map((item) => {
+                  return (
+                    <Tab
+                      key={item.tabIndex}
+                      label={item.label}
+                      {...a11yProps(item.tabIndex)}
+                    />
+                  );
+                })}
+              </Tabs>
+            </div>
           </AppBar>
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={value}
             onChangeIndex={handleChangeIndex}
+            style={{color: "#393e46", backgroundColor: "#EEEEEE"}}
           >
             {tabData.map((item) => {
               return (
@@ -291,7 +296,9 @@ function EditSlot(props) {
         </Box>
       </Grid>
       <Grid item xs={4}>
-        <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
+        <Box
+          sx={{ bgcolor: "background.paper", width: "100%", padding: "3vw", paddingTop:"20vw", minHeight:"100vh"}}
+        >
           <Stack spacing={3}>
             <DesktopTimePicker
               label="Start time"
@@ -318,19 +325,38 @@ function EditSlot(props) {
               }}
               renderInput={(params) => <TextField {...params} />}
             />
-            <Button variant="outlined" onClick={handleClick}>
+            <Button
+              style={{
+                width: "10vw",
+                margin: "auto",
+                marginBottom: "1vw",
+                marginTop: "1vw",
+                color: "#EEEEEE", backgroundColor: "#393E46"
+              }}
+              variant="contained"
+              onClick={handleClick}
+            >
               Add slot
             </Button>
-            <Button variant="outlined" onClick={handleSaveChanges}>
+            <Button
+              style={{
+                width: "10vw",
+                margin: "auto",
+                color: "#EEEEEE", backgroundColor: "#393E46"
+              }}
+              variant="contained"
+              onClick={handleSaveChanges}
+            >
               Save Changes
             </Button>
-            <div>
+            <div style={{marginLeft:"auto", marginRight:"auto"}}>
               <p>{errorMessage}</p>
             </div>
           </Stack>
         </Box>
       </Grid>
     </Grid>
+    </div>
   );
 }
 

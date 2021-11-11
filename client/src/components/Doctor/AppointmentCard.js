@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent } from "@material-ui/core";
+import { Button, Card, CardActions, CardContent, Box } from "@material-ui/core";
 import React from "react";
 import { Typography } from "@material-ui/core";
 import format from "date-fns/format";
@@ -14,29 +14,33 @@ function AppointmentCard(props) {
         );
         return temp;
       });
-    }
-    else{
+    } else {
       console.log(props.appointmentID);
       console.log(props.status);
       console.log("cant update, slot already assigned");
     }
   }
   return (
-    <Card>
-      <CardContent>
-        <Typography component={"span"} variant="body2">
-          {/* Start time: {props.startTime} <br /> End time: {props.endTime} */}
-          {/* Start time: {props.startTime} */}
-          Start time: {format(props.startTime, "hh:mm")}
-          <br /> End time: {format(props.endTime, "hh:mm")}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button variant="outlined" onClick={handleClick}>
-          Delete
-        </Button>
-      </CardActions>
-    </Card>
+    <Box sx={{ width: "20vw" }}>
+      <Card style={{ color: "#EEEEEE", backgroundColor: "#393E46" }}>
+        <CardContent>
+          <h1
+            style={{
+              color: "#EEEEEE",
+              fontSize: ".8vw",
+            }}
+          >
+            Starts at: {format(props.startTime, "hh:mm")}
+            <br /> Ends at: {format(props.endTime, "hh:mm")}
+          </h1>
+        </CardContent>
+        <CardActions>
+          <Button style={{ color: "#393E46", backgroundColor: "#EEEEEE" }} variant="contained" onClick={handleClick}>
+            Delete
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
   );
 }
 
