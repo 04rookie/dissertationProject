@@ -117,8 +117,8 @@ function Room(props) {
       videoTag.class = "styleVideo";
       // Adding the video tag to container where we will display
       // // All the remote streams
-      // videoTag.height = 240;
-      // videoTag.width = 320;
+      videoTag.height = "45vh";
+      //videoTag.width = "45";
       $("#otherUser").append(videoTag);
     });
     return true;
@@ -462,7 +462,7 @@ function Room(props) {
                 xs={12}
                 justifyContent="center"
                 alignItems="center"
-                style={{ display: "flex", maxHeight: "40vh", margin: "1vw" }}
+                style={{maxHeight: "40vh", margin: "1vw" }}
               >
                 {/* {roomInfo.roomID} */}
                 <video
@@ -478,8 +478,8 @@ function Room(props) {
                 id="otherUser"
                 justifyContent="center"
                 alignItems="center"
-                style={{ display: "flex", maxHeight: "40vh", margin: "1vw" }}
-              ></Grid>
+                style={{maxHeight: "40vh", margin: "1vw" }}
+              >{/* {roomInfo.roomID} */}</Grid>
           </Grid>
 
           <Box justify="center">
