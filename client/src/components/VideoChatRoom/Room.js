@@ -199,8 +199,8 @@ function Room(props) {
 
   async function closeMeeting() {
     try {
-      const response = await meeting.stopAudio()
-      await meeting.stopVideo()
+      const response = await meeting.stopAudio();
+      await meeting.stopVideo();
       await meeting.leaveMeeting();
       return response;
     } catch (err) {
@@ -209,62 +209,66 @@ function Room(props) {
   }
 
   async function handleSessionCloseForDoctor() {
-    await axios.get("/api/user/" + roomInfo.userID, {
-      headers: AuthHeader(),
-    }).then(async (response) => {
-      console.log("loggin response");
-      console.log(response);
-      console.log(response.data.sessionCount + " response session count");
-      let sessionCount = response.data.sessionCount.filter(
-        (element) => element.doctorID === roomInfo.doctorID
-      );
-      let test = sessionCount[0].sessionCount;
-      console.log(test + " test");
-      if (test > 0) {
-        await axios.patch(
-          "/api/user/" + roomInfo.userID + "/user-subscription/session-count",
-          { doctorID: roomInfo.doctorID },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+    await axios
+      .get("/api/user/" + roomInfo.userID, {
+        headers: AuthHeader(),
+      })
+      .then(async (response) => {
+        console.log("loggin response");
+        console.log(response);
+        console.log(response.data.sessionCount + " response session count");
+        let sessionCount = response.data.sessionCount.filter(
+          (element) => element.doctorID === roomInfo.doctorID
         );
-      } else {
-        await axios.delete(
-          "/api/user/" +
-            roomInfo.userID +
-            "/user-subscription/doctor/" +
-            roomInfo.doctorID,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
-    });
+        let test = sessionCount[0].sessionCount;
+        console.log(test + " test");
+        if (test > 0) {
+          await axios.patch(
+            "/api/user/" + roomInfo.userID + "/user-subscription/session-count",
+            { doctorID: roomInfo.doctorID },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        } else {
+          await axios.delete(
+            "/api/user/" +
+              roomInfo.userID +
+              "/user-subscription/doctor/" +
+              roomInfo.doctorID,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+        }
+      });
     return true;
   }
 
   async function handleSessionCloseForPatient() {
-    await axios.get("/api/user/" + roomInfo.userID, {
-      headers: AuthHeader(),
-    }).then(async (response) => {
-      let sessionCount = response.data.sessionCount.filter(
-        (element) => element.doctorID === roomInfo.doctorID
-      );
-      let test = sessionCount[0].sessionCount;
-      if (test > 0) {
-        closeMeeting().then(() => {
-          const loadUserPage = () =>
-            history.push({
-              pathname: "/user-page/" + roomInfo.userID,
-            });
-          loadUserPage();
-        });
-      } else {
-        setOpenReview(true);
-      }
-    });
+    await axios
+      .get("/api/user/" + roomInfo.userID, {
+        headers: AuthHeader(),
+      })
+      .then(async (response) => {
+        let sessionCount = response.data.sessionCount.filter(
+          (element) => element.doctorID === roomInfo.doctorID
+        );
+        let test = sessionCount[0].sessionCount;
+        if (test > 0) {
+          closeMeeting().then(() => {
+            const loadUserPage = () =>
+              history.push({
+                pathname: "/user-page/" + roomInfo.userID,
+              });
+            loadUserPage();
+          });
+        } else {
+          setOpenReview(true);
+        }
+      });
     return true;
   }
 
@@ -389,8 +393,8 @@ function Room(props) {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleActionFalse}>Disagree</Button>
-              <Button onClick={handleActionTrue}>Agree</Button>
+              <Button onClick={handleActionFalse}>No</Button>
+              <Button onClick={handleActionTrue}>Yes</Button>
             </DialogActions>
           </Dialog>
         </div>
@@ -401,20 +405,29 @@ function Room(props) {
             onClose={handleReviewActionFalse}
             aria-describedby="alert-dialog-slide-description"
           >
-            <DialogTitle>This was your last session.</DialogTitle>
+            <DialogTitle style={{ marginLeft: ".5vw", margin: "1vw" }}>
+              This was your last session.
+            </DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-slide-description">
+              <DialogContentText
+                style={{ margin: ".5vw" }}
+                id="alert-dialog-slide-description"
+              >
                 If you wish to share your experience with others of your
                 journey, please feel free to leave a comment
               </DialogContentText>
-              <Rating
-                name="userRating"
-                value={rating}
-                onChange={(event, newValue) => {
-                  setRating(newValue);
-                }}
-              />
+              <div>
+                <Rating
+                  style={{ margin: ".5vw" }}
+                  name="userRating"
+                  value={rating}
+                  onChange={(event, newValue) => {
+                    setRating(newValue);
+                  }}
+                />
+              </div>
               <TextField
+                style={{ margin: ".5vw" }}
                 id="reviewTitle"
                 label="Title"
                 multiline
@@ -425,6 +438,7 @@ function Room(props) {
                 name="reviewTitle"
               />
               <TextField
+                style={{ margin: ".5vw" }}
                 id="reviewText"
                 label="Multiline"
                 multiline
@@ -441,38 +455,46 @@ function Room(props) {
             </DialogActions>
           </Dialog>
         </div>
-        <Grid container>
-          <Grid
-            item
-            xs={6}
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            style={{ display: "flex" }}
-          >
-            {/* {roomInfo.roomID} */}
-            <video className="styleVideo" id="userVideo" autoPlay muted></video>
+        <div style={{ maxHeight: "100vh" }}>
+          <Grid container spacing={3} rowSpacing={3}>
+              <Grid
+                item
+                xs={12}
+                justifyContent="center"
+                alignItems="center"
+                style={{ display: "flex", maxHeight: "40vh", margin: "1vw" }}
+              >
+                {/* {roomInfo.roomID} */}
+                <video
+                  className="styleVideo"
+                  id="userVideo"
+                  autoPlay
+                  muted
+                ></video>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                id="otherUser"
+                justifyContent="center"
+                alignItems="center"
+                style={{ display: "flex", maxHeight: "40vh", margin: "1vw" }}
+              ></Grid>
           </Grid>
-          <Grid
-            item
-            xs={6}
-            id="otherUser"
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            style={{ display: "flex" }}
-          ></Grid>
-        </Grid>
-        <Box>
-          <ButtonGroup
-            variant="contained"
-            aria-label="outlined primary button group"
-          >
-            <Button onClick={handleLocalAudio}>Start Audio</Button>
-            <Button onClick={handleDisconnect}>Disconnect</Button>
-            <Button onClick={handleLocalVideo}>Start Video</Button>
-          </ButtonGroup>
-        </Box>
+
+          <Box justify="center">
+            <ButtonGroup
+              style={{ marginLeft: "auto", marginRight: "auto" }}
+              variant="contained"
+              aria-label="outlined primary button group"
+              align="center"
+            >
+              <Button onClick={handleLocalAudio}>Start Audio</Button>
+              <Button onClick={handleDisconnect}>Disconnect</Button>
+              <Button onClick={handleLocalVideo}>Start Video</Button>
+            </ButtonGroup>
+          </Box>
+        </div>
       </Stack>
     </Box>
   );
