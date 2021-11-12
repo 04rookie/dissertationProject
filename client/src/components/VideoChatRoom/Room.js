@@ -455,7 +455,7 @@ function Room(props) {
             </DialogActions>
           </Dialog>
         </div>
-        <div style={{ maxHeight: "100vh", maxWidth:"100vw" }}>
+        <div style={{marginTop:"10vh", maxHeight: "100vh", maxWidth:"100vw" }}>
           <Grid container spacing={3}>
               <Grid
                 item
