@@ -117,7 +117,7 @@ function Room(props) {
       videoTag.class = "styleVideo";
       // Adding the video tag to container where we will display
       // // All the remote streams
-      videoTag.height = "45vh";
+      //videoTag.height = "400";
       //videoTag.width = "45";
       $("#otherUser").append(videoTag);
     });
@@ -151,7 +151,8 @@ function Room(props) {
       console.log("after: " + localVideo);
       return true;
     } catch (ex) {
-      console.log("Error occurred whern sharing camera", ex);
+      console.log("Error occurred whern sharing camera");
+      console.log(ex)
     }
   }
 
@@ -162,7 +163,8 @@ function Room(props) {
       await meeting.unmuteLocalAudio();
       return true;
     } catch (ex) {
-      console.log("Error occurred whern sharing local microphone", ex);
+      console.log("Error occurred whern sharing local microphone");
+      console.log(ex)
     }
   }
 
@@ -455,14 +457,14 @@ function Room(props) {
             </DialogActions>
           </Dialog>
         </div>
-        <div style={{ maxHeight: "100vh" }}>
-          <Grid container spacing={3} rowSpacing={3}>
+        <div style={{ maxHeight: "100vh", maxWidth:"100vw" }}>
+          <Grid container spacing={3}>
               <Grid
                 item
-                xs={12}
+                xs={6}
                 justifyContent="center"
                 alignItems="center"
-                style={{maxHeight: "40vh", margin: "1vw" }}
+                style={{display:"flex"}}
               >
                 {/* {roomInfo.roomID} */}
                 <video
@@ -474,15 +476,15 @@ function Room(props) {
               </Grid>
               <Grid
                 item
-                xs={12}
+                xs={6}
                 id="otherUser"
                 justifyContent="center"
                 alignItems="center"
-                style={{maxHeight: "40vh", margin: "1vw" }}
-              >{/* {roomInfo.roomID} */}</Grid>
+                style={{display:"flex"}}
+              ></Grid>
           </Grid>
-
-          <Box justify="center">
+          <div style={{display:"flex", justifyContent:"center", padding:"2vw"}}>
+          <Box>
             <ButtonGroup
               style={{ marginLeft: "auto", marginRight: "auto" }}
               variant="contained"
@@ -494,6 +496,7 @@ function Room(props) {
               <Button onClick={handleLocalVideo}>Start Video</Button>
             </ButtonGroup>
           </Box>
+          </div>
         </div>
       </Stack>
     </Box>
