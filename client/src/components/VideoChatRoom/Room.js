@@ -117,8 +117,8 @@ function Room(props) {
       videoTag.class = "styleVideo";
       // Adding the video tag to container where we will display
       // // All the remote streams
-      videoTag.height = "400";
-      //videoTag.width = "45";
+      videoTag.height = 400;
+      // videoTag.width = 320;
       $("#otherUser").append(videoTag);
     });
     return true;
@@ -146,23 +146,23 @@ function Room(props) {
     try {
       console.log("before: " + localVideo);
       //setLocalVideo(true);
-      await meeting.startVideo()//.then(async ()=> await meeting.resumeLocalVideo());
+      await meeting.startVideo();
+      await meeting.resumeLocalVideo();
       console.log("after: " + localVideo);
       return true;
     } catch (ex) {
-      console.log("Error occurred whern sharing camera");
-      console.log(ex)
+      console.log("Error occurred whern sharing camera", ex);
     }
   }
 
   async function handleLocalAudio() {
     try {
       //setLocalAudio(true);
-      await meeting.startAudio()//.then(async ()=> await meeting.unmuteLocalAudio());
+      await meeting.startAudio();
+      await meeting.unmuteLocalAudio();
       return true;
     } catch (ex) {
-      console.log("Error occurred whern sharing local microphone");
-      console.log(ex)
+      console.log("Error occurred whern sharing local microphone", ex);
     }
   }
 
@@ -199,8 +199,8 @@ function Room(props) {
 
   async function closeMeeting() {
     try {
-      const response = await meeting.stopAudio();
-      await meeting.stopVideo();
+      const response = await meeting.stopAudio()
+      await meeting.stopVideo()
       await meeting.leaveMeeting();
       return response;
     } catch (err) {
@@ -209,66 +209,63 @@ function Room(props) {
   }
 
   async function handleSessionCloseForDoctor() {
-    await axios
-      .get("/api/user/" + roomInfo.userID, {
-        headers: AuthHeader(),
-      })
-      .then(async (response) => {
-        console.log("loggin response");
-        console.log(response);
-        console.log(response.data.sessionCount + " response session count");
-        let sessionCount = response.data.sessionCount.filter(
-          (element) => element.doctorID === roomInfo.doctorID
+    await axios.get("/api/public/user/" + roomInfo.userID, {
+      headers: AuthHeader(),
+    }).then(async (response) => {
+      console.log("loggin response");
+      console.log(response);
+      console.log(response.data.sessionCount + " response session count");
+      let sessionCount = response.data.userSubscription.filter(
+        (element) => element.doctorID === roomInfo.doctorID
+      );
+      let test = sessionCount[0].sessionCount;
+      console.log(test + " test");
+      if (test > 0) {
+        await axios.patch(
+          "/api/user/" + roomInfo.userID + "/user-subscription/session-count",
+          { doctorID: roomInfo.doctorID },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
-        let test = sessionCount[0].sessionCount;
-        console.log(test + " test");
-        if (test > 0) {
-          await axios.patch(
-            "/api/user/" + roomInfo.userID + "/user-subscription/session-count",
-            { doctorID: roomInfo.doctorID },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-        } else {
-          await axios.delete(
-            "/api/user/" +
-              roomInfo.userID +
-              "/user-subscription/doctor/" +
-              roomInfo.doctorID,
-            {
-              headers: { "Content-Type": "application/json" },
-            }
-          );
-        }
-      });
+      } else {
+        await axios.delete(
+          "/api/user/" +
+            roomInfo.userID +
+            "/user-subscription/doctor/" +
+            roomInfo.doctorID,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    });
     return true;
   }
 
   async function handleSessionCloseForPatient() {
-    await axios
-      .get("/api/user/" + roomInfo.userID, {
-        headers: AuthHeader(),
-      })
-      .then(async (response) => {
-        let sessionCount = response.data.sessionCount.filter(
-          (element) => element.doctorID === roomInfo.doctorID
-        );
-        let test = sessionCount[0].sessionCount;
-        if (test > 0) {
-          closeMeeting().then(() => {
-            const loadUserPage = () =>
-              history.push({
-                pathname: "/user-page/" + roomInfo.userID,
-              });
-            loadUserPage();
-          });
-        } else {
-          setOpenReview(true);
-        }
-      });
+    await axios.get("/api/user/" + roomInfo.userID, {
+      headers: AuthHeader(),
+    }).then(async (response) => {
+      console.log(response)
+      let sessionCount = response.data.sessionCount.filter(
+        (element) => element.doctorID === roomInfo.doctorID
+      );
+      let test = sessionCount[0].sessionCount;
+      if (test > 0) {
+        closeMeeting().then(() => {
+          const loadUserPage = () =>
+            history.push({
+              pathname: "/user-page/" + roomInfo.userID,
+            });
+          loadUserPage();
+        });
+      } else {
+        setOpenReview(true);
+      }
+    });
     return true;
   }
 
@@ -405,44 +402,39 @@ function Room(props) {
             onClose={handleReviewActionFalse}
             aria-describedby="alert-dialog-slide-description"
           >
-            <DialogTitle style={{ marginLeft: ".5vw", margin: "1vw" }}>
-              This was your last session.
-            </DialogTitle>
+            <DialogTitle style={{ marginLeft: ".5vw", margin: "1vw" }}>This was your last session.</DialogTitle>
             <DialogContent>
-              <DialogContentText
-                style={{ margin: ".5vw" }}
-                id="alert-dialog-slide-description"
-              >
+              <DialogContentText style={{ margin: ".5vw" }} id="alert-dialog-slide-description">
                 If you wish to share your experience with others of your
                 journey, please feel free to leave a comment
               </DialogContentText>
               <div>
-                <Rating
-                  style={{ margin: ".5vw" }}
-                  name="userRating"
-                  value={rating}
-                  onChange={(event, newValue) => {
-                    setRating(newValue);
-                  }}
-                />
+              <Rating
+                name="userRating"
+                value={rating}
+                style={{ margin: ".5vw" }}
+                onChange={(event, newValue) => {
+                  setRating(newValue);
+                }}
+              />
               </div>
               <TextField
-                style={{ margin: ".5vw" }}
                 id="reviewTitle"
                 label="Title"
                 multiline
                 maxRows={2}
+                style={{ margin: ".5vw" }}
                 value={reviewTitle}
                 onChange={handleReviewTitleChange}
                 variant="filled"
                 name="reviewTitle"
               />
               <TextField
-                style={{ margin: ".5vw" }}
                 id="reviewText"
                 label="Multiline"
                 multiline
                 maxRows={4}
+                style={{ margin: ".5vw" }}
                 value={reviewText}
                 onChange={handleReviewChange}
                 variant="filled"
@@ -455,46 +447,38 @@ function Room(props) {
             </DialogActions>
           </Dialog>
         </div>
-        <div style={{marginTop:"10vh", maxHeight: "100vh", maxWidth:"100vw" }}>
-          <Grid container spacing={3}>
-              <Grid
-                item
-                xs={6}
-                justifyContent="center"
-                alignItems="center"
-              >
-                {/* {roomInfo.roomID} */}
-                <video
-                  className="styleVideo"
-                  id="userVideo"
-                  autoPlay
-                  muted
-                  height="400px"
-                ></video>
-              </Grid>
-              <Grid
-                item
-                xs={6}
-                id="otherUser"
-                justifyContent="center"
-                alignItems="center"
-              ></Grid>
+        <Grid container>
+          <Grid
+            item
+            xs={6}
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            style={{ display: "flex" }}
+          >
+            {/* {roomInfo.roomID} */}
+            <video className="styleVideo" id="userVideo" autoPlay muted height="400"></video>
           </Grid>
-          <div style={{display:"flex", justifyContent:"center", padding:"2vw"}}>
-          <Box>
-            <ButtonGroup
-              style={{ marginLeft: "auto", marginRight: "auto" }}
-              variant="contained"
-              aria-label="outlined primary button group"
-              align="center"
-            >
-              <Button onClick={handleLocalAudio}>Start Audio</Button>
-              <Button onClick={handleDisconnect}>Disconnect</Button>
-              <Button onClick={handleLocalVideo}>Start Video</Button>
-            </ButtonGroup>
-          </Box>
-          </div>
-        </div>
+          <Grid
+            item
+            xs={6}
+            id="otherUser"
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            style={{ display: "flex" }}
+          ></Grid>
+        </Grid>
+        <Box>
+          <ButtonGroup
+            variant="contained"
+            aria-label="outlined primary button group"
+          >
+            <Button onClick={handleLocalAudio}>Start Audio</Button>
+            <Button onClick={handleDisconnect}>Disconnect</Button>
+            <Button onClick={handleLocalVideo}>Start Video</Button>
+          </ButtonGroup>
+        </Box>
       </Stack>
     </Box>
   );
