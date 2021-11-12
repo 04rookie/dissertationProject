@@ -462,7 +462,7 @@ function Room(props) {
                 xs={6}
                 justifyContent="center"
                 alignItems="center"
-                style={{display:"flex"}}
+                style={{display:"flex", height:"400px"}}
               >
                 {/* {roomInfo.roomID} */}
                 <video
