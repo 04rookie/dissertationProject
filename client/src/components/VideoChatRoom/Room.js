@@ -117,7 +117,7 @@ function Room(props) {
       videoTag.class = "styleVideo";
       // Adding the video tag to container where we will display
       // // All the remote streams
-      //videoTag.height = "400";
+      videoTag.height = "400";
       //videoTag.width = "45";
       $("#otherUser").append(videoTag);
     });
@@ -146,8 +146,7 @@ function Room(props) {
     try {
       console.log("before: " + localVideo);
       //setLocalVideo(true);
-      await meeting.startVideo();
-      await meeting.resumeLocalVideo();
+      await meeting.startVideo()//.then(async ()=> await meeting.resumeLocalVideo());
       console.log("after: " + localVideo);
       return true;
     } catch (ex) {
@@ -159,8 +158,7 @@ function Room(props) {
   async function handleLocalAudio() {
     try {
       //setLocalAudio(true);
-      await meeting.startAudio();
-      await meeting.unmuteLocalAudio();
+      await meeting.startAudio()//.then(async ()=> await meeting.unmuteLocalAudio());
       return true;
     } catch (ex) {
       console.log("Error occurred whern sharing local microphone");
