@@ -462,7 +462,6 @@ function Room(props) {
                 xs={6}
                 justifyContent="center"
                 alignItems="center"
-                style={{display:"flex", height:"400px"}}
               >
                 {/* {roomInfo.roomID} */}
                 <video
@@ -470,6 +469,7 @@ function Room(props) {
                   id="userVideo"
                   autoPlay
                   muted
+                  height="400px"
                 ></video>
               </Grid>
               <Grid
@@ -478,7 +478,6 @@ function Room(props) {
                 id="otherUser"
                 justifyContent="center"
                 alignItems="center"
-                style={{display:"flex"}}
               ></Grid>
           </Grid>
           <div style={{display:"flex", justifyContent:"center", padding:"2vw"}}>
