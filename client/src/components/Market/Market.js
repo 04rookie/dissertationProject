@@ -10,6 +10,7 @@ import { Box } from "@material-ui/core";
 import CurrentUserId from "../Context/CurrentUserId";
 import CurrentDoctorId from "../Context/CurrentDoctorId";
 import { useContext } from "react";
+import Bio from "./Bio";
 function Market(props) {
   const [doctorID, setDoctorID] = useState("");
   let history = useHistory();
@@ -17,6 +18,7 @@ function Market(props) {
   const limitValue = 10;
   const [marketData, setMarketData] = useState([]);
   const [review, setReview] = useState([]);
+  const [bio, setBio] = useState(null)
   const userIDContext = useContext(CurrentUserId);
   const doctorIDContext = useContext(CurrentDoctorId);
   useEffect(() => {
@@ -50,12 +52,19 @@ function Market(props) {
   }
 
   function handleClickReviews(doctorID) {
+    setBio(null)
     getReviews(doctorID);
   }
 
   async function getReviews(doctorID) {
     const response = await axios.get("/api/review/" + doctorID);
     setReview(response.data);
+  }
+
+  function handleClickBio(doctorID){
+    console.log(bio)
+    setReview([])
+    setBio(marketData.find((doc)=>doc.doctorID===doctorID))
   }
 
   // generates random string of given length
@@ -103,8 +112,9 @@ function Market(props) {
           onChange={handleNavbarChange}
           aria-label="nav tabs example"
           textColor="#EEEEEE"
-          indicatorColor="#EEEEEE"
+          indicatorColor="secondary"
           backgroundColor="#EEEEEE"
+          style={{paddingLeft:"5vw"}}
         >
           <LinkTab label="Profile" onClick={handleNavbarProfile} />
           <LinkTab label="Market" onClick={handleNavbarMarket} />
@@ -122,7 +132,9 @@ function Market(props) {
                     doctorID={cardData.doctorID}
                     doctorName={cardData.doctorFirstName + " " + cardData.doctorLastName}
                     doctorRate={cardData.doctorRate}
+                    doctorBio={cardData}
                     handleClickReviews={handleClickReviews}
+                    handleClickBio={handleClickBio}
                   />
                 );
               })}
@@ -132,6 +144,7 @@ function Market(props) {
             {review.map((data) => {
               return <ReviewCard key={makeid(5)} data={data} />;
             })}
+            {bio!==null?<Bio bio={bio}/>: <span></span>}
           </Grid>
         </Grid>
       </div>

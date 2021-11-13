@@ -103,6 +103,7 @@ function DoctorPage(props) {
           aria-label="nav tabs example"
           textColor="#EEEEEE"
           indicatorColor="#EEEEEE"
+          style={{paddingLeft:"5vw"}}
         >
           <LinkTab label="Profile" onClick={handleNavbarProfile} />
           <LinkTab label="Market" onClick={handleNavbarMarket} />

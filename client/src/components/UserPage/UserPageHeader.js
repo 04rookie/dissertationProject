@@ -6,6 +6,7 @@ function UserPageHeader(props) {
       sx={{
         width: "100%",
         padding: "2vw",
+        paddingLeft:"5vw",
         backgroundColor: "#00ADB5",
       }}
     >

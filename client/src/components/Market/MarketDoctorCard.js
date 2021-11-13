@@ -28,6 +28,10 @@ function MarketDoctorCard(props) {
     props.handleClickReviews(props.doctorID);
   }
 
+  function callHandleClickBio(){
+    props.handleClickBio(props.doctorID);
+  }
+
   return (
     <Grid item align="center" xs={6}>
       <Card style={{backgroundColor:"#222831", padding:"2vw", minWidth:"22vw"}}>
@@ -40,7 +44,7 @@ function MarketDoctorCard(props) {
             }}
           >
             Dr. {props.doctorName} <br />
-            {props.doctorRate} Rs. per session 
+            {props.doctorRate} Rs. per session
           </h1>
         </CardContent>
         <CardActions>
@@ -49,6 +53,9 @@ function MarketDoctorCard(props) {
           </Button>
           <Button variant="contained" style={{Color:"#EEEEEE", backgroundColor:"#393E46"}} onClick={callHandleClickReviews}>
             Show Reviews
+          </Button>
+          <Button variant="contained" style={{Color:"#EEEEEE", backgroundColor:"#393E46"}} onClick={callHandleClickBio}>
+            Show Bio
           </Button>
         </CardActions>
       </Card>

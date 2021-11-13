@@ -288,6 +288,15 @@ const doctorSchema = new mongoose.Schema({
   doctorPassword: String,
   doctorEmail: String,
   doctorRate: Number,
+  doctorQuote:String,
+  doctorLanguage: String,
+  doctorApproach: String,
+  doctorDegree:String,
+  doctorThought:String,
+  doctorWhy: String,
+  doctorStyle: String,
+  doctorConcern: String,
+  doctorHandle:String,
   appointment: [
     {
       appointmentID: String,
@@ -315,6 +324,15 @@ app.post("/api/register-doctor", (req, res) => {
     doctorPassword: req.body.doctorPassword,
     doctorEmail: req.body.doctorEmail,
     doctorRate: req.body.doctorRate,
+    doctorQuote:req.body.doctorQuote,
+    doctorLanguage: req.body.doctorLanguage,
+    doctorApproach: req.body.doctorApproach,
+    doctorDegree: req.body.doctorDegree,
+    doctorThought: req.body.doctorThought,
+    doctorWhy: req.body.doctorWhy,
+    doctorStyle: req.body.doctorStyle,
+    doctorConcern: req.body.doctorConcern,
+    doctorHandle: req.body.doctorHandle
   });
   newDoctor.save((err) => {
     if (err) {
@@ -410,7 +428,7 @@ app.get("/api/edit-slot/:doctorID", (req, res) => {
 
 app.get("/api/doctor", (req, res) => {
   const skipValue = parseInt(req.query.skipValue);
-  Doctor.find({}, null, { skip: skipValue, limit: 10 }, (err, foundUser) => {
+  Doctor.find({}, null, (err, foundUser) => {
     if (err) {
       console.log(err);
     } else if (foundUser) {

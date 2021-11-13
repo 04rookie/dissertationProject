@@ -6,7 +6,16 @@ function DoctorRegistration() {
     doctorLastName: "",
     doctorEmail: "",
     doctorPassword: "",
-    doctorRate: ""
+    doctorRate: "",
+    doctorQuote:"",
+    doctorLanguage: "",
+    doctorApproach: "",
+    doctorDegree:"",
+    doctorThought:"",
+    doctorWhy: "",
+    doctorStyle: "",
+    doctorConcern: "",
+    doctorHandle:""
   });
 
   function handleChange(event) {
@@ -72,6 +81,68 @@ function DoctorRegistration() {
           name="doctorRate"
           onChange={handleChange}
           value={doctor.doctorRate}
+        />
+        Quote
+        <input
+          type="text"
+          name="doctorQuote"
+          onChange={handleChange}
+          value={doctor.doctorQuote}
+        />
+        Language
+        <input
+          type="text"
+          name="doctorLanguage"
+          onChange={handleChange}
+          value={doctor.doctorLanguage}
+        />
+        Approach
+        <input
+          type="text"
+          name="doctorApproach"
+          onChange={handleChange}
+          value={doctor.doctorApproach}
+        />
+        Degree
+        <input
+          type="text"
+          name="doctorDegree"
+          onChange={handleChange}
+          value={doctor.doctorDegree}
+        />
+        Thought<input
+          type="text"
+          name="doctorThought"
+          onChange={handleChange}
+          value={doctor.doctorThought}
+        />
+        Why
+        <input
+          type="text"
+          name="doctorWhy"
+          onChange={handleChange}
+          value={doctor.doctorWhy}
+        />
+        style
+        <input
+          type="text"
+          name="doctorStyle"
+          onChange={handleChange}
+          value={doctor.doctorStyle}
+        />
+        Concerns
+        <input
+          type="text"
+          name="doctorConcern"
+          onChange={handleChange}
+          value={doctor.doctorConcern}
+        />
+        Handle
+        <input
+          type="text"
+          name="doctorHandle"
+          onChange={handleChange}
+          value={doctor.doctorHandle}
         />
         <input type="submit" name="submit" onClick={handleSubmit} />
       </form>{" "}
