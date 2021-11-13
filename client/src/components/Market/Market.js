@@ -59,12 +59,14 @@ function Market(props) {
   async function getReviews(doctorID) {
     const response = await axios.get("/api/review/" + doctorID);
     setReview(response.data);
+    window.scrollTo(0,0)
   }
 
   function handleClickBio(doctorID){
     console.log(bio)
     setReview([])
     setBio(marketData.find((doc)=>doc.doctorID===doctorID))
+    window.scrollTo(0,0)
   }
 
   // generates random string of given length
