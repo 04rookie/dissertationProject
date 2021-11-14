@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { matchPath, useLocation } from "react-router";
+import React, { useEffect, useState, useContext } from "react";
+import { matchPath, useHistory, useLocation } from "react-router";
 
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
@@ -19,7 +19,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-
+import CurrentUserId from "./Context/CurrentUserId";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -61,7 +61,9 @@ function a11yProps(index) {
 }
 
 function Booking() {
+  const history = useHistory();
   let location = useLocation();
+  const userID = useContext(CurrentUserId);
   useEffect(() => {
     getServerDoctorAppointment();
   }, []);
@@ -156,10 +158,10 @@ function Booking() {
   const handlePay = () => {
     setOpen(false);
     setSuccess("Booked billing successful");
-    success === "Booked billing successful"
-      ? postServerAppointment()
-      : console.log("not booked billing unsuccessful");
-    const response = postServerAppointment();
+    // success === "Booked billing successful"
+    //   ? postServerAppointment()
+    //   : console.log("not booked billing unsuccessful");
+    const response = postServerAppointment().then((res)=>history.push({pathname:"/user-page/" + userID}));
   };
 
   const [cardType, setCardType] = React.useState("Credit Card");
