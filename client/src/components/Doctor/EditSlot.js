@@ -20,7 +20,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import AppointmentCard from "./AppointmentCard";
 import axios from "axios";
-import { matchPath, useLocation } from "react-router-dom";
+import { matchPath, useLocation, useHistory } from "react-router-dom";
 import format from "date-fns/format";
 import { intervalToDuration, isAfter, isBefore, isEqual } from "date-fns";
 
@@ -60,7 +60,8 @@ function EditSlot(props) {
   const theme = useTheme();
   const [errorMessage, setErrorMessage] = useState("");
   const location = useLocation();
-  const [value, setValue] = React.useState(0);
+  const history = useHistory();
+    const [value, setValue] = React.useState(0);
   const [data, setData] = useState({
     startTime: new Date(),
     endTime: new Date(),
@@ -186,6 +187,7 @@ function EditSlot(props) {
         return false;
       }
     }
+    setErrorMessage("")
     return true;
   }
 
@@ -227,6 +229,7 @@ function EditSlot(props) {
         }
       );
       console.log(response);
+      history.push({pathname:"/doctor/" + match.params.doctorID});
     } catch (error) {
       console.log(error);
     }

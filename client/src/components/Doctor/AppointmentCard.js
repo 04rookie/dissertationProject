@@ -2,14 +2,17 @@ import { Button, Card, CardActions, CardContent, Box } from "@material-ui/core";
 import React from "react";
 import { Typography } from "@material-ui/core";
 import format from "date-fns/format";
+import { intervalToDuration, isAfter, isBefore, isEqual } from "date-fns";
 function AppointmentCard(props) {
   function handleClick() {
     if (props.appointmentID === null && props.status === "open") {
+      console.log(props)
       props.setData((prev) => {
         const temp = { ...prev };
         temp.days[props.value] = temp.days[props.value].filter(
           (valueFilter) => {
-            return valueFilter.appointmentID !== props.appointmentID;
+            //return valueFilter.appointmentID !== props.appointmentID;
+            return isEqual(valueFilter.startTime, props.startTime)===false;
           }
         );
         return temp;
