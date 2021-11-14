@@ -209,7 +209,7 @@ async function postRoom(roomInfo) {
   try {
     const data = {
       roomName: roomInfo.roomID,
-      endMeetingAfterNoActivityInSec: 5,
+      endMeetingAfterNoActivityInSec: 600,
     };
     const response = await axios.post(
       "https://instahelp.metered.live/api/v1/room?secretKey=" +

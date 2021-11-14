@@ -54,9 +54,10 @@ function Room(props) {
     }
   }
   async function joinMeeting() {
+    const name = userType==="doctor"?roomInfo.doctorID:roomInfo.userID;
     meetingInfo = await meeting.join({
       roomURL: "instahelp.metered.live/" + roomInfo.roomID,
-      name: "John Doe",
+      name: name,
     });
     return meetingInfo;
   }
