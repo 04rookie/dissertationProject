@@ -12,8 +12,8 @@ app.listen(process.env.PORT || port, () =>
 );
 const date = require("date-and-time");
 const { format } = require("date-fns");
-const jwt = require('jsonwebtoken');
-const auth = require('./MiddleWare/auth');
+const jwt = require("jsonwebtoken");
+const auth = require("./MiddleWare/auth");
 //Connecting to mongo db on atlas.
 mongoose.connect(process.env.MONGO_DB_URL_KEY, {
   useNewUrlParser: true,
@@ -49,7 +49,11 @@ app.post("/api/login", (req, res) => {
         if (!foundUser.userSubscription.length === 0) {
           userSubscription = foundUser.userSubscription;
         }
-        const token = jwt.sign({userID: foundUser.userID}, process.env.USER_TOKEN, {expiresIn:'72h'});
+        const token = jwt.sign(
+          { userID: foundUser.userID },
+          process.env.USER_TOKEN,
+          { expiresIn: "72h" }
+        );
         let resObject = {
           userID: foundUser.userID,
           userFirstName: foundUser.userFirstName,
@@ -57,7 +61,7 @@ app.post("/api/login", (req, res) => {
           userEmail: foundUser.userEmail,
           loginStatus: true,
           userSubscription: userSubscription,
-          token: token
+          token: token,
         };
         res.send(resObject);
         console.log("Login Successful");
@@ -68,7 +72,7 @@ app.post("/api/login", (req, res) => {
           userLastName: null,
           userEmail: null,
           loginStatus: false,
-          token:null
+          token: null,
         };
         res.send(resObject);
         console.log("Login Failed");
@@ -87,14 +91,18 @@ app.post("/api/login/doctor", (req, res) => {
         );
         console.log(err);
       } else if (foundUser) {
-        const token = jwt.sign({userID: foundUser.doctorID}, process.env.USER_TOKEN, {expiresIn:'72h'});
+        const token = jwt.sign(
+          { userID: foundUser.doctorID },
+          process.env.USER_TOKEN,
+          { expiresIn: "72h" }
+        );
         let resObject = {
           doctorID: foundUser.doctorID,
           doctorFirstName: foundUser.doctorFirstName,
           doctorLastName: foundUser.doctorLastName,
           doctorEmail: foundUser.doctorEmail,
           loginStatus: true,
-          token: token
+          token: token,
         };
         res.send(resObject);
         console.log("Login Successful");
@@ -105,7 +113,7 @@ app.post("/api/login/doctor", (req, res) => {
           doctorLastName: null,
           doctorEmail: null,
           loginStatus: false,
-          token: null
+          token: null,
         };
         res.send(resObject);
         console.log("Login Failed");
@@ -139,7 +147,7 @@ app.post("/api/register", (req, res) => {
 });
 
 //fetch user data for user page
-app.get("/api/user/:userID", auth,(req, res) => {
+app.get("/api/user/:userID", auth, (req, res) => {
   const userID = req.params.userID;
   User.findOne({ userID: userID }, async (err, foundUser) => {
     if (err) {
@@ -288,15 +296,15 @@ const doctorSchema = new mongoose.Schema({
   doctorPassword: String,
   doctorEmail: String,
   doctorRate: Number,
-  doctorQuote:String,
+  doctorQuote: String,
   doctorLanguage: String,
   doctorApproach: String,
-  doctorDegree:String,
-  doctorThought:String,
+  doctorDegree: String,
+  doctorThought: String,
   doctorWhy: String,
   doctorStyle: String,
   doctorConcern: String,
-  doctorHandle:String,
+  doctorHandle: String,
   appointment: [
     {
       appointmentID: String,
@@ -324,7 +332,7 @@ app.post("/api/register-doctor", (req, res) => {
     doctorPassword: req.body.doctorPassword,
     doctorEmail: req.body.doctorEmail,
     doctorRate: req.body.doctorRate,
-    doctorQuote:req.body.doctorQuote,
+    doctorQuote: req.body.doctorQuote,
     doctorLanguage: req.body.doctorLanguage,
     doctorApproach: req.body.doctorApproach,
     doctorDegree: req.body.doctorDegree,
@@ -332,7 +340,7 @@ app.post("/api/register-doctor", (req, res) => {
     doctorWhy: req.body.doctorWhy,
     doctorStyle: req.body.doctorStyle,
     doctorConcern: req.body.doctorConcern,
-    doctorHandle: req.body.doctorHandle
+    doctorHandle: req.body.doctorHandle,
   });
   newDoctor.save((err) => {
     if (err) {
@@ -346,7 +354,7 @@ app.post("/api/register-doctor", (req, res) => {
 });
 
 //to fetch data of a particular doctor
-app.get("/api/doctor/:doctorID", auth,(req, res) => {
+app.get("/api/doctor/:doctorID", auth, (req, res) => {
   const doctorID = req.params.doctorID;
   Doctor.findOne({ doctorID: doctorID }, (err, foundUser) => {
     if (err) {
@@ -566,6 +574,32 @@ app.patch("/api/doctor/appointment/:appointmentID", (req, res) => {
 
 app.delete("/api/room/:roomID", (req, res) => {
   const roomID = req.params.roomID;
+  console.log(req.body);
+  Doctor.findOne(
+    {
+      doctorID: req.body.doctorID,
+      "appointment.appointmentID": req.body.appointmentID,
+    },
+    (err, foundUser) => {
+      if (err) {
+        console.log(err);
+      }
+      else if(foundUser){
+        foundUser.appointment.forEach((sub)=>{
+          if(sub.appointmentID === req.body.appointmentID){
+            sub.roomID=null
+          }
+        })
+        foundUser.markModified("appointment");
+        foundUser.save();
+        //res.send(true)
+      }
+      else{
+        console.log("error in app.delete room/roomID")
+      }
+    }
+  );
+
   console.log("inside api room delete");
   deleteRoomFromMetered(roomID).then((responseFromMeteredDeleteRoom) =>
     Room.findOneAndDelete({ roomName: roomID }, (err) => {
@@ -695,7 +729,7 @@ app.get("/api/review/:doctorID", (req, res) => {
   });
 });
 
-app.get("/api/public/doctor/:doctorID/",(req, res) => {
+app.get("/api/public/doctor/:doctorID/", (req, res) => {
   const doctorID = req.params.doctorID;
   Doctor.findOne({ doctorID: doctorID }, (err, foundUser) => {
     if (err) {
@@ -712,7 +746,7 @@ app.get("/api/public/doctor/:doctorID/",(req, res) => {
   });
 });
 
-app.get("/api/public/user/:userID/",(req, res) => {
+app.get("/api/public/user/:userID/", (req, res) => {
   const userID = req.params.userID;
   User.findOne({ userID: userID }, (err, foundUser) => {
     if (err) {
@@ -729,11 +763,10 @@ app.get("/api/public/user/:userID/",(req, res) => {
   });
 });
 
-
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/app","/index.html"),(err)=>{
-    if(err){
-      console.log(err)
+  res.sendFile(path.join(__dirname, "/app", "/index.html"), (err) => {
+    if (err) {
+      console.log(err);
     }
   });
   //res.sendFile(path.resolve(__dirname, "/app"));

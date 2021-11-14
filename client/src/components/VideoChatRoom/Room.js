@@ -16,6 +16,7 @@ import { useHistory } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import AuthHeader from "../Auth/Auth";
 function Room(props) {
+  const [live, setLive] = useState("");
   const [meeting, setMeeting] = useState(new window.Metered.Meeting());
   let meetingInfo;
   let history = useHistory();
@@ -33,6 +34,7 @@ function Room(props) {
     postRoom().then((success) => {
       console.log(success + "logging success");
       joinMeeting().then(() => {
+        setLive("Live.")
         console.log("joined");
         showMe().then(() => showThem());
       });
@@ -55,10 +57,19 @@ function Room(props) {
   }
   async function joinMeeting() {
     const name = userType==="doctor"?roomInfo.doctorID:roomInfo.userID;
-    meetingInfo = await meeting.join({
-      roomURL: "instahelp.metered.live/" + roomInfo.roomID,
-      name: name,
-    });
+    try{
+      //setMeeting(new window.Metered.Meeting())
+      //meeting = new window.Metered.Meeting();
+      meetingInfo = await meeting.join({
+        roomURL: "instahelp.metered.live/" + roomInfo.roomID,
+        name: name,
+      });
+      return true;
+    }
+    catch(err){
+      console.log("error in joining")
+      console.log(err)
+    }
     return meetingInfo;
   }
 
@@ -152,7 +163,7 @@ function Room(props) {
       console.log("after: " + localVideo);
       return true;
     } catch (ex) {
-      joinMeeting();
+      //joinMeeting();
       console.log("Error occurred whern sharing camera", ex);
     }
   }
@@ -164,7 +175,7 @@ function Room(props) {
       await meeting.unmuteLocalAudio();
       return true;
     } catch (ex) {
-      joinMeeting();
+      //joinMeeting();
       console.log("Error occurred whern sharing local microphone", ex);
     }
   }
@@ -208,6 +219,7 @@ function Room(props) {
       return response;
     } catch (err) {
       console.log("err");
+      console.log(err)
     }
   }
 
@@ -291,6 +303,7 @@ function Room(props) {
   async function deleteRoom() {
     const response = await axios.delete("/api/room/" + roomInfo.roomID, {
       headers: { "Content-Type": "application/json" },
+      data: {doctorID: roomInfo.doctorID, appointmentID: roomInfo.appointmentID}
     });
     console.log(response + "inside delete room room.js");
     return response;
@@ -375,6 +388,7 @@ function Room(props) {
 
   return (
     <Box>
+    <div style={{padding:"2vw", color:"#E84545"}}>{live}</div>
       <Stack spacing={3}>
         <div>
           <Dialog
@@ -473,6 +487,7 @@ function Room(props) {
           ></Grid>
         </Grid>
         <Box>
+        <div style={{display:"flex", justifyContent:"center"}}>
           <ButtonGroup
             variant="contained"
             aria-label="outlined primary button group"
@@ -481,6 +496,7 @@ function Room(props) {
             <Button onClick={handleDisconnect}>Disconnect</Button>
             <Button onClick={handleLocalVideo}>Start Video</Button>
           </ButtonGroup>
+          </div>
         </Box>
       </Stack>
     </Box>
