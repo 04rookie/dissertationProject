@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import styles from "./LoginStyles.module.css";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 import BasicDatePicker from "../Date/BasicDatePicker";
 //logic for register page
 function RegisterContainer(props) {
+  const history = useHistory();
   const [contact, setContact] = useState({
     fName: "",
     lName: "",
@@ -27,7 +28,7 @@ function RegisterContainer(props) {
     const type = event.target.name;
     if (type === "signupButton") {
       console.log("calling from reg cont callHandleRegisterFromApp");
-      postServerRegister(contact);
+      postServerRegister(contact).then((res)=>history.push({pathname:"/login"}));
     }
     event.preventDefault();
   }
