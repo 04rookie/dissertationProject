@@ -21,8 +21,7 @@ function ReviewCard(props) {
         <h1
           style={{
             color: "#EEEEEE",
-            fontSize: ".8vw",
-            fontFamily: "Montserrat",
+            fontSize: "1vw",
           }}
         >
            User: {userName}
@@ -30,8 +29,7 @@ function ReviewCard(props) {
         <h1
           style={{
             color: "#EEEEEE",
-            fontSize: ".6vw",
-            fontFamily: "Montserrat",
+            fontSize: ".8vw",
           }}
         >
            On {props.data.reviewDate}
@@ -40,16 +38,14 @@ function ReviewCard(props) {
           style={{
             color: "#EEEEEE",
             fontSize: ".8vw",
-            fontFamily: "Montserrat",
           }}
         >
            Rating: {props.data.rating}
         </h1>
         <h1
           style={{
-            color: "#EEEEEE",
+            color: "#00ADB5",
             fontSize: ".8vw",
-            fontFamily: "Montserrat",
           }}
         >
           {props.data.reviewTitle}
@@ -58,7 +54,6 @@ function ReviewCard(props) {
           style={{
             color: "#EEEEEE",
             fontSize: ".6vw",
-            fontFamily: "Montserrat",
           }}
         >
           {props.data.reviewText}
