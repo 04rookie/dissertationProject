@@ -78,9 +78,7 @@ function LoginContainer(props) {
       console.log(response.data);
       if (response.data.loginStatus === true) {
         //setAppState(<UserPageContainer userData = {response.data} callVideoChatRoom={callVideoChatRoom}/>);
-        // console.log(response.data.token)
         if(response.data.token){
-          console.log(response.data.token)
           localStorage.setItem("userID", JSON.stringify(response.data.token));
         }
         props.setLoginContext(response.data.userID);

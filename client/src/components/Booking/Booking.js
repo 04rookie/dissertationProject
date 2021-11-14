@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
-import { matchPath, useHistory, useLocation } from "react-router";
-
+import { matchPath, useLocation } from "react-router";
+import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@mui/material/styles";
@@ -132,7 +132,7 @@ function Booking() {
 
   async function postServerAppointment() {
     try {
-      const response = axios.patch(
+      const response = await axios.patch(
         "/api/booking/" + doctorID,
         [sessionCount, data],
         {
@@ -155,14 +155,18 @@ function Booking() {
     setSuccess("not booked billing unsuccessful");
   };
 
-  const handlePay = () => {
+  async function handlePay() {
     setOpen(false);
+    history.push({
+      pathname: "/user-page/" + userID,
+    });
     setSuccess("Booked billing successful");
     // success === "Booked billing successful"
     //   ? postServerAppointment()
     //   : console.log("not booked billing unsuccessful");
-    const response = postServerAppointment().then((res)=>history.push({pathname:"/user-page/" + userID}));
-  };
+    const response = await postServerAppointment();
+    return response;
+  }
 
   const [cardType, setCardType] = React.useState("Credit Card");
 
@@ -258,10 +262,16 @@ function Booking() {
           <Button onClick={handlePay}>Pay</Button>
         </DialogActions>
       </Dialog>
-      <div style={{ color: "#393e46", backgroundColor: "#EEEEEE", minHeight:"100vh" }}>
+      <div
+        style={{
+          color: "#393e46",
+          backgroundColor: "#EEEEEE",
+          minHeight: "100vh",
+        }}
+      >
         <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
           <AppBar position="static">
-            <div style={{color: "#EEEEEE", backgroundColor: "#393E46"}}>
+            <div style={{ color: "#EEEEEE", backgroundColor: "#393E46" }}>
               <Tabs
                 value={value}
                 onChange={handleChange}
@@ -315,9 +325,12 @@ function Booking() {
           </SwipeableViews>
         </Box>
         <div align="center">
-        <Button style={{color: "#EEEEEE", backgroundColor: "#393E46"}} onClick={handleClickProceed}>
-          Proceed
-        </Button>
+          <Button
+            style={{ color: "#EEEEEE", backgroundColor: "#393E46" }}
+            onClick={handleClickProceed}
+          >
+            Proceed
+          </Button>
         </div>
       </div>
     </Stack>
