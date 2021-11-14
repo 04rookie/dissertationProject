@@ -93,7 +93,7 @@ function DoctorPage(props) {
         height: "100vh",
         color: "#EEEEEE",
         backgroundColor: "#222831",
-        overflow: "hidden",
+        overflowX:"hidden"
       }}
     >
       <Box sx={{ width: "100%" }}>

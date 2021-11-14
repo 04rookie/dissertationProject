@@ -94,7 +94,12 @@ function UserPageContainer(props) {
 
   return (
     <div
-      style={{ height: "100vh", color: "#EEEEEE", backgroundColor: "#222831", overflow:"hidden" }}
+      style={{
+        height: "100vh",
+        color: "#EEEEEE",
+        backgroundColor: "#222831",
+        overflowX: "hidden",
+      }}
     >
       <Box sx={{ width: "100%" }}>
         <Tabs
@@ -103,7 +108,7 @@ function UserPageContainer(props) {
           aria-label="nav tabs example"
           textColor="#EEEEEE"
           indicatorColor="#EEEEEE"
-          style={{paddingLeft:"5vw"}}
+          style={{ paddingLeft: "5vw" }}
         >
           <LinkTab label="Profile" onClick={handleNavbarProfile} />
           <LinkTab label="Market" onClick={handleNavbarMarket} />
