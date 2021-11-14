@@ -128,7 +128,7 @@ function LoginContainer(props) {
   }
 
   return (
-    <div
+    <div style={{height:"100vh"}}
       className={["col-lg-6", styles.loginContainer, styles.container].join(
         " "
       )}
