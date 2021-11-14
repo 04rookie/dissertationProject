@@ -152,6 +152,7 @@ function Room(props) {
       console.log("after: " + localVideo);
       return true;
     } catch (ex) {
+      joinMeeting();
       console.log("Error occurred whern sharing camera", ex);
     }
   }
@@ -163,6 +164,7 @@ function Room(props) {
       await meeting.unmuteLocalAudio();
       return true;
     } catch (ex) {
+      joinMeeting();
       console.log("Error occurred whern sharing local microphone", ex);
     }
   }
