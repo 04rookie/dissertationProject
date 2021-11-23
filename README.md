@@ -1,4 +1,4 @@
-# e-cube website.
+# instaHelp website.
 
 A small website made in **MERN** stack and deployed on Heroku. The website uses ReactJS + MaterialUI for front-end, and the back-end API is developed in Express, NodeJS and MongoDB Atlas.
 >The website can be currently viewed at- https://instahelp-production-build.herokuapp.com/
